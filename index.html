@@ -244,7 +244,7 @@ nav a.active { color:#fff; background:rgba(255,255,255,0.06); }
   <p class="sub-heading" data-zh="技術運作原理" data-en="How It Works">技術運作原理</p>
   <div class="steps">
     <div class="step"><div class="step-num">1</div><div class="step-content"><p class="step-title" data-zh="對比學習（Contrastive Learning）" data-en="Contrastive Learning">對比學習（Contrastive Learning）</p><p class="step-body" data-zh="CLIP 同時訓練「文字編碼器」與「圖片編碼器」。語意相近的圖文配對在向量空間中被拉近，不相關的被推遠。這是 Zero-shot 能力的根本來源。" data-en="CLIP simultaneously trains a text encoder and an image encoder. Semantically similar image-text pairs are pulled closer in the shared vector space, while unrelated pairs are pushed apart. This is the core mechanism behind Zero-shot capability.">CLIP 同時訓練「文字編碼器」與「圖片編碼器」。語意相近的圖文配對在向量空間中被拉近，不相關的被推遠。這是 Zero-shot 能力的根本來源。</p></div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-content"><p class="step-title" data-zh="訓練資料規模（Notebook LM 未提及）" data-en="Training Scale (Not covered by Notebook LM)">訓練資料規模（Notebook LM 未提及）</p><p class="step-body" data-zh="訓練資料為 <strong>4 億組圖文配對</strong>（WebImageText 資料集），全部來自網路爬取。訓練資料集本身是 OpenAI 私有的，工程師取得的是模型權重與程式碼，而非原始訓練資料。" data-en="Training data consists of <strong>400 million image-text pairs</strong> (WebImageText dataset), all scraped from the internet. The training dataset is proprietary to OpenAI. Engineers receive model weights and code only.">訓練資料為 <strong>4 億組圖文配對</strong>（WebImageText 資料集），全部來自網路爬取。訓練資料集本身是 OpenAI 私有的，工程師取得的是模型權重與程式碼，而非原始訓練資料。</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><p class="step-title" data-zh="訓練資料規模" data-en="Training Scale">訓練資料規模（Notebook LM 未提及）</p><p class="step-body" data-zh="訓練資料為 <strong>4 億組圖文配對</strong>（WebImageText 資料集），全部來自網路爬取。訓練資料集本身是 OpenAI 私有的，工程師取得的是模型權重與程式碼，而非原始訓練資料。" data-en="Training data consists of <strong>400 million image-text pairs</strong> (WebImageText dataset), all scraped from the internet. The training dataset is proprietary to OpenAI. Engineers receive model weights and code only.">訓練資料為 <strong>4 億組圖文配對</strong>（WebImageText 資料集），全部來自網路爬取。訓練資料集本身是 OpenAI 私有的，工程師取得的是模型權重與程式碼，而非原始訓練資料。</p></div></div>
     <div class="step"><div class="step-num">3</div><div class="step-content"><p class="step-title" data-zh="Zero-shot：開箱即用，無需重訓" data-en="Zero-shot: Ready to Use, No Retraining">Zero-shot：開箱即用，無需重訓</p><p class="step-body" data-zh="CLIP 不需要預先設定分類桶，也不需要重新訓練。給它一張圖片加上幾個自然語言描述選項，它計算相似度並回傳最匹配的結果，能即時處理從未見過的視覺概念。" data-en="CLIP requires no predefined categories and no retraining. Give it an image and several natural language options; it calculates similarity scores and returns the best match — including concepts it has never explicitly seen.">CLIP 不需要預先設定分類桶，也不需要重新訓練。給它一張圖片加上幾個自然語言描述選項，它計算相似度並回傳最匹配的結果，能即時處理從未見過的視覺概念。</p></div></div>
   </div>
   <p class="sub-heading" data-zh="解決了哪些過往成本過高的痛點" data-en="Pain Points It Solves">解決了哪些過往成本過高的痛點</p>
@@ -340,8 +340,8 @@ nav a.active { color:#fff; background:rgba(255,255,255,0.06); }
 
 <script>
 // ── SECURITY CONFIG ──────────────────────────────────────
-// SHA-256 of "FIVE GUTS" — password never stored in plaintext
-const PW_HASH = '91ca9a324307a1847b627ee57ed53475c975506fb602de5e76f300d81acfb27a';
+// SHA-256 of "FIVE GUYS" — password never stored in plaintext
+const PW_HASH = 'ca7ba3a69b9619fe4ef0467b5b1fa768681f799d7cdc55f33b83a7f9a25a6a48';
 // Destination page — obscure filename, no hints in this file
 const PROTECTED_PAGE = 'p-f7x2k9.html';
 const MAX_ATTEMPTS = 5;

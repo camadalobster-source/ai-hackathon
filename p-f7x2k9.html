@@ -146,6 +146,12 @@ nav a:hover, nav a.active { color:#fff; }
 .fade-in { opacity:0; transform:translateY(20px); transition:opacity 0.6s ease, transform 0.6s ease; }
 .fade-in.visible { opacity:1; transform:translateY(0); }
 
+/* LIMIT GRID */
+.limit-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:1.25rem 0; }
+.limit-item { background:#fff; border:1px solid var(--border); border-top:3px solid #c0392b; border-radius:6px; padding:0.9rem 1rem; }
+.limit-title { font-size:13px; font-weight:600; color:#c0392b; margin-bottom:4px; }
+.limit-body { font-size:12px; color:var(--ink-2); line-height:1.6; }
+
 @media (max-width:620px) {
   .card-grid { grid-template-columns:1fr; }
   .hero h1 { font-size:1.8rem; }
@@ -175,7 +181,11 @@ nav a:hover, nav a.active { color:#fff; }
 <nav>
   <a href="index.html#tech" data-zh="01 技術原理" data-en="01 Technology">01 技術原理</a>
   <a href="index.html#news" data-zh="02 新聞業應用" data-en="02 News Industry">02 新聞業應用</a>
-  <a href="#" class="active" data-zh="03 TVBS 提案方向 🔓" data-en="03 TVBS Proposal 🔓">03 TVBS 提案方向 🔓</a>
+  <a href="#pain-points" data-zh="3.1 痛點" data-en="3.1 Pain Points">3.1 痛點</a>
+  <a href="#scenarios" data-zh="3.2 真實案例" data-en="3.2 Real Cases">3.2 真實案例</a>
+  <a href="#architecture" data-zh="3.3 架構" data-en="3.3 Architecture">3.3 架構</a>
+  <a href="#scoring" data-zh="3.4 評分" data-en="3.4 Scoring">3.4 評分</a>
+  <a href="#risks" data-zh="3.5 風險" data-en="3.5 Risks">3.5 風險</a>
   <span class="nav-tag">TVBS AI Hackathon 2026</span>
 </nav>
 
@@ -185,8 +195,8 @@ nav a:hover, nav a.active { color:#fff; }
   <div class="access-badge">🔓 <span data-zh="已通過密碼驗證" data-en="Password Verified">已通過密碼驗證</span></div>
   <h1 data-zh="TVBS 提案方向<br><em>Hackathon Phase 1</em>" data-en="TVBS Proposal Direction<br><em>Hackathon Phase 1</em>">TVBS 提案方向<br><em>Hackathon Phase 1</em></h1>
   <div class="hero-meta-row">
-    <div class="hero-meta-item"><strong data-zh="使用者" data-en="Target Users">使用者</strong><span data-zh="編輯、記者、新聞產製團隊" data-en="Editors, journalists, production teams">編輯、記者、新聞產製團隊</span></div>
-    <div class="hero-meta-item"><strong data-zh="目標" data-en="Goals">目標</strong><span data-zh="快速配圖（搶快）、SEO 稿提升流量" data-en="Fast image matching, SEO traffic boost">快速配圖（搶快）、SEO 稿提升流量</span></div>
+    <div class="hero-meta-item"><strong data-zh="使用者" data-en="Target Users">使用者</strong><span data-zh="編輯、記者、工讀生、版主" data-en="Editors, reporters, interns, social media managers">編輯、記者、工讀生、版主</span></div>
+    <div class="hero-meta-item"><strong data-zh="共同需求" data-en="Shared Need">共同需求</strong><span data-zh="截稿壓力下快速找到視覺貼切的示意圖" data-en="Find visually matching illustrative images on deadline">截稿壓力下快速找到視覺貼切的示意圖</span></div>
     <div class="hero-meta-item"><strong data-zh="核心技術" data-en="Core Tech">核心技術</strong>CLIP + OpenSearch</div>
     <div class="hero-meta-item"><strong data-zh="影片範圍" data-en="Video Scope">影片範圍</strong><span data-zh="未來升級方向，不納入本次" data-en="Future upgrade, excluded from Phase 1">未來升級方向，不納入本次</span></div>
   </div>
@@ -238,34 +248,56 @@ nav a:hover, nav a.active { color:#fff; }
 <section class="section fade-in" id="scenarios">
   <div class="section-header">
     <span class="section-num">3.2 —</span>
-    <h2 class="section-title" data-zh="CLIP 能補足的缺口" data-en="The Gap CLIP Fills">CLIP 能補足的缺口</h2>
+    <h2 class="section-title" data-zh="真實使用情境（取自 TVBS 新聞網）" data-en="Real Use Cases (from TVBS News)">真實使用情境（取自 TVBS 新聞網）</h2>
   </div>
+
+  <div class="callout" style="margin-bottom:1.5rem;">
+    <p class="callout-title" data-zh="觀察背景" data-en="Observation Context">觀察背景</p>
+    <p class="callout-body" data-zh="直接觀察 TVBS 新聞網生活與社會分類共 22 則近期新聞，發現示意圖的使用非常普遍，圖片幾乎都非當事人畫面，主要依賴 shutterstock 達志影像等授權圖庫。以下三個案例最能說明「文章關鍵字」與「圖片畫面內容」之間的結構性落差。" data-en="We directly reviewed 22 recent articles from TVBS News lifestyle and society sections. Illustrative images are extremely common — almost none show actual people involved. The following three cases best illustrate the structural gap between article keywords and image visual content.">直接觀察 TVBS 新聞網生活與社會分類共 22 則近期新聞，發現示意圖的使用非常普遍，圖片幾乎都非當事人畫面，主要依賴 shutterstock 達志影像等授權圖庫。以下三個案例最能說明「文章關鍵字」與「圖片畫面內容」之間的結構性落差。</p>
+  </div>
+
   <div class="card-grid" style="margin-bottom:1rem;">
     <div class="card card-accent">
-      <p class="card-label" data-zh="場景一 ★ 建議核心 Prototype" data-en="Scenario 1 ★ Core Prototype">場景一 ★ 建議核心 Prototype</p>
-      <p class="card-title" data-zh="搶快稿：示意圖快速配圖" data-en="Breaking News: Instant Image Matching">搶快稿：示意圖快速配圖</p>
-      <p class="card-body" data-zh="突發新聞發生時，文字可以很快，但配圖常是卡關點。記者輸入「工廠火災濃煙」，系統秒回 TVBS 自有圖庫中視覺最符合的示意圖，直接授權使用，不涉及外部版權問題。" data-en="When breaking news hits, copy is fast but images are the bottleneck. A reporter types 'factory fire black smoke' and the system instantly returns the most visually matching images from TVBS's own library — no external copyright issues.">突發新聞發生時，文字可以很快，但配圖常是卡關點。記者輸入「工廠火災濃煙」，系統秒回 TVBS 自有圖庫中視覺最符合的示意圖，直接授權使用，不涉及外部版權問題。</p>
+      <p class="card-label" data-zh="案例一 — 政策新聞" data-en="Case 1 — Policy News">案例一 — 政策新聞</p>
+      <p class="card-title" data-zh="台灣重返3大豬病非疫國" data-en="Taiwan Returns to Non-Epidemic Status for 3 Swine Diseases">台灣重返3大豬病非疫國</p>
+      <p class="card-body" data-zh="需要「豬隻農場」示意圖。文章關鍵字是「豬病非疫國」、「農業部」，和畫面毫無關係。搜「豬病」找不到農場場景；CLIP 輸入「豬隻農場牧場」即可直接搜尋，無需任何事先標記。" data-en="Needs a 'pig farm' illustrative image. Article keywords are 'swine disease' and 'Council of Agriculture' — unrelated to any farm scene. Searching those terms finds nothing useful; CLIP accepts 'pig farm livestock' and returns visually matching images directly.">需要「豬隻農場」示意圖。文章關鍵字是「豬病非疫國」、「農業部」，和畫面毫無關係。搜「豬病」找不到農場場景；CLIP 輸入「豬隻農場牧場」即可直接搜尋，無需任何事先標記。</p>
       <div class="tag-row">
-        <span class="badge badge-accent" data-zh="AI 不可或缺" data-en="AI Indispensable">AI 不可或缺</span>
-        <span class="badge badge-teal" data-zh="可量化成效" data-en="Measurable Impact">可量化成效</span>
-        <span class="badge badge-blue" data-zh="Demo 效果直觀" data-en="Intuitive Demo">Demo 效果直觀</span>
+        <span class="badge badge-accent" data-zh="關鍵字 ≠ 畫面" data-en="Keyword ≠ Visual">關鍵字 ≠ 畫面</span>
+        <span class="badge badge-teal" data-zh="真實連結可查" data-en="Verified Link">真實連結可查</span>
       </div>
     </div>
     <div class="card card-blue">
-      <p class="card-label" data-zh="場景二 ○ 可考慮" data-en="Scenario 2 ○ Worth Considering">場景二 ○ 可考慮</p>
-      <p class="card-title" data-zh="深度稿：跨事件畫面素材查找" data-en="In-Depth: Cross-Event Visual Search">深度稿：跨事件畫面素材查找</p>
-      <p class="card-body" data-zh="記者寫深度 SEO 稿需要多張圖片。<strong>正確分工：</strong>先用 OpenSearch 找到特定事件的文章（事件識別），再用 CLIP 在這批素材中篩選符合畫面感的圖片（如「淹水街道」、「強風吹倒樹木」）。兩層搜尋各司其職。" data-en="In-depth SEO articles require multiple images. <strong>Correct division of labor:</strong> OpenSearch identifies the event; CLIP filters for the right visual mood (e.g., 'flooded streets,' 'trees blown down'). Each system does what it does best.">記者寫深度 SEO 稿需要多張圖片。<strong>正確分工：</strong>先用 OpenSearch 找到特定事件的文章（事件識別），再用 CLIP 在這批素材中篩選符合畫面感的圖片（如「淹水街道」、「強風吹倒樹木」）。兩層搜尋各司其職。</p>
+      <p class="card-label" data-zh="案例二 — 社會意外" data-en="Case 2 — Social Incident">案例二 — 社會意外</p>
+      <p class="card-title" data-zh="6旬婦失聯！新屋溪尋獲遺體" data-en="Elderly Woman Missing — Body Found in Xinwu River">6旬婦失聯！新屋溪尋獲遺體</p>
+      <p class="card-body" data-zh="需要「溪流搜救場景」示意圖（非當事人）。文章關鍵字是「新屋溪」、「失聯」等地名事件詞，完全無法對應「警消在溪邊搜救」的畫面。搜地名找不到任何場景圖；CLIP 輸入「警消溪流搜救場景」即可比對視覺。" data-en="Needs a 'river rescue scene' illustrative image (non-subject). Article keywords are the location name 'Xinwu River' and 'missing' — none map to a rescue scene by water. Searching the location name returns nothing useful; CLIP accepts 'rescue workers by river' directly.">需要「溪流搜救場景」示意圖（非當事人）。文章關鍵字是「新屋溪」、「失聯」等地名事件詞，完全無法對應「警消在溪邊搜救」的畫面。搜地名找不到任何場景圖；CLIP 輸入「警消溪流搜救場景」即可比對視覺。</p>
       <div class="tag-row">
-        <span class="badge badge-blue" data-zh="需搭配 OpenSearch" data-en="Requires OpenSearch">需搭配 OpenSearch</span>
-        <span class="badge badge-ink" data-zh="兩層架構" data-en="Two-Layer Architecture">兩層架構</span>
+        <span class="badge badge-blue" data-zh="地名 ≠ 場景" data-en="Location ≠ Scene">地名 ≠ 場景</span>
+        <span class="badge badge-teal" data-zh="真實連結可查" data-en="Verified Link">真實連結可查</span>
       </div>
     </div>
   </div>
 
-  <div class="callout" style="border-left:3px solid var(--amber); background:var(--amber-light);">
-    <p class="callout-title" style="color:var(--amber);" data-zh="未來延伸方向（超出 CLIP 能力範圍）" data-en="Future Extension (Beyond CLIP's Scope)">未來延伸方向（超出 CLIP 能力範圍）</p>
-    <p class="callout-body" data-zh="圖片 alt text 對 Google 圖片搜尋排名有直接影響，目前新聞業幾乎都是空白。<br><br><strong>技術澄清：</strong>CLIP 是「選擇題」模型，<strong>無法自行生成文字描述</strong>。要做 alt text 自動建議，需串接 Vision-Language Model（如 GPT-4V、LLaVA）。此功能屬第二階段技術擴充，不納入本次 Prototype 範圍，可在提案中列為後續優化路徑。" data-en="Image alt text directly impacts Google Image Search rankings — yet it is almost universally empty across the news industry.<br><br><strong>Technical clarification:</strong> CLIP is a matching model and <strong>cannot generate text</strong>. Alt text suggestions require a Vision-Language Model (GPT-4V, LLaVA). This is a Phase 2 feature — out of scope for the current Prototype but should be listed as a future optimization path.">圖片 alt text 對 Google 圖片搜尋排名有直接影響，目前新聞業幾乎都是空白。<br><br><strong>技術澄清：</strong>CLIP 是「選擇題」模型，<strong>無法自行生成文字描述</strong>。要做 alt text 自動建議，需串接 Vision-Language Model（如 GPT-4V、LLaVA）。此功能屬第二階段技術擴充，不納入本次 Prototype 範圍，可在提案中列為後續優化路徑。</p>
+  <div class="card-grid" style="margin-bottom:1rem;">
+    <div class="card card-teal">
+      <p class="card-label" data-zh="案例三 — 生活概念" data-en="Case 3 — Lifestyle Concept">案例三 — 生活概念</p>
+      <p class="card-title" data-zh="2026粉紅月亮今晚登場！" data-en="2026 Pink Moon Rising Tonight!">2026粉紅月亮今晚登場！</p>
+      <p class="card-body" data-zh="需要「夜空大月亮」示意圖。關鍵字「粉紅月亮」、「許願」在圖庫中幾乎不存在對應標記。這類生活概念文章最能凸顯問題——CLIP 輸入「夜空中的圓月」即可找到視覺相符的圖片，是現有系統根本做不到的搜尋方式。" data-en="Needs a 'large moon against night sky' illustrative image. Keywords 'pink moon' and 'make a wish' have almost no matching tags in the library. This lifestyle concept type best shows the problem — CLIP accepts 'full moon night sky' and returns matches directly, something the existing system fundamentally cannot do.">需要「夜空大月亮」示意圖。關鍵字「粉紅月亮」、「許願」在圖庫中幾乎不存在對應標記。這類生活概念文章最能凸顯問題——CLIP 輸入「夜空中的圓月」即可找到視覺相符的圖片，是現有系統根本做不到的搜尋方式。</p>
+      <div class="tag-row">
+        <span class="badge badge-teal" data-zh="概念完全無法標記" data-en="Concept Cannot Be Tagged">概念完全無法標記</span>
+        <span class="badge badge-teal" data-zh="真實連結可查" data-en="Verified Link">真實連結可查</span>
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber); background:var(--amber-light);">
+      <p class="card-label" style="color:var(--amber);" data-zh="延伸情境 — 深度稿" data-en="Extended — In-Depth Articles">延伸情境 — 深度稿</p>
+      <p class="card-title" data-zh="跨事件畫面素材查找" data-en="Cross-Event Visual Search">跨事件畫面素材查找</p>
+      <p class="card-body" data-zh="深度 SEO 稿需要多張圖片。正確分工：先用 OpenSearch 找到特定事件的文章（事件識別），再用 CLIP 在這批素材中篩選符合畫面感的圖（如「淹水街道」、「強風吹倒樹木」）。兩層搜尋各司其職，不混用。" data-en="In-depth SEO articles require multiple images. Correct division of labor: OpenSearch identifies the specific event (event-level); CLIP filters for visual mood from that pool (e.g., 'flooded streets,' 'trees blown down by wind'). Two layers, each doing what it does best.">深度 SEO 稿需要多張圖片。正確分工：先用 OpenSearch 找到特定事件的文章（事件識別），再用 CLIP 在這批素材中篩選符合畫面感的圖（如「淹水街道」、「強風吹倒樹木」）。兩層搜尋各司其職，不混用。</p>
+      <div class="tag-row">
+        <span class="badge badge-amber" data-zh="需搭配 OpenSearch" data-en="With OpenSearch">需搭配 OpenSearch</span>
+      </div>
+    </div>
   </div>
+
+  <div class="notice" data-zh="※ 以上案例均取自 TVBS 新聞網實際發布文章，完整 22 則調查資料（含原文連結）詳見團隊提案附件。" data-en="※ All cases above are taken from actual published TVBS News articles. The full survey of 22 cases with original links is available in the team's proposal appendix.">※ 以上案例均取自 TVBS 新聞網實際發布文章，完整 22 則調查資料（含原文連結）詳見團隊提案附件。</div>
 </section>
 
 <section class="section fade-in" id="architecture">
@@ -274,7 +306,7 @@ nav a:hover, nav a.active { color:#fff; }
     <h2 class="section-title" data-zh="建議系統架構" data-en="Recommended System Architecture">建議系統架構</h2>
   </div>
   <div class="flow">
-    <div><span class="flow-label" data-zh="記者輸入查詢" data-en="Reporter enters query">記者輸入查詢</span></div>
+    <div><span class="flow-label" data-zh="使用者輸入查詢" data-en="User enters query">使用者輸入查詢</span></div>
     <div style="padding-left:1rem; margin-top:6px;">
       <span data-zh="├ 知道事件 / 人名 / 時間？" data-en="├ Know event / name / time?">├ 知道事件 / 人名 / 時間？</span><span class="flow-arrow">→</span><span class="flow-label">OpenSearch</span>
       <span class="flow-note" data-zh="找到對的事件，縮小素材範圍" data-en="Locate the right event, narrow down asset pool">找到對的事件，縮小素材範圍</span>
@@ -308,22 +340,22 @@ nav a:hover, nav a.active { color:#fff; }
       <tr>
         <td data-zh="實際影響力與價值" data-en="Real Impact & Value">實際影響力與價值</td>
         <td>35%</td>
-        <td data-zh="可量化：「配圖時間從幾分鐘降到幾秒」，搶快稿的時間節省可在導入期直接記錄與比較" data-en="Quantifiable: 'Image sourcing time reduced from minutes to seconds' — directly measurable during the deployment period">可量化：「配圖時間從幾分鐘降到幾秒」，搶快稿的時間節省可在導入期直接記錄與比較</td>
+        <td data-zh="預估配圖時間從 3–10 分鐘縮短至 1 分鐘以內；自有圖庫使用率提升；外購圖片支出減少。實際成效將於 Prototype 導入期記錄驗證。" data-en="Estimated reduction in image sourcing time from 3–10 min to under 1 min; higher in-house library usage; lower external stock spending. Actual impact measured during Prototype deployment.">預估配圖時間從 3–10 分鐘縮短至 1 分鐘以內；自有圖庫使用率提升；外購圖片支出減少。實際成效將於 Prototype 導入期記錄驗證。</td>
       </tr>
       <tr>
         <td data-zh="問題與解法適配度" data-en="Problem–Solution Fit">問題與解法適配度</td>
         <td>25%</td>
-        <td data-zh="現有 OpenSearch + 人工搜圖無法解決「畫面感搜尋」，問題明確、被正確理解，解法直接對應" data-en="Existing OpenSearch + manual search cannot address visual mood search — the problem is clearly defined and the solution directly maps to it">現有 OpenSearch + 人工搜圖無法解決「畫面感搜尋」，問題明確、被正確理解，解法直接對應</td>
+        <td data-zh="現有 OpenSearch + 人工搜圖無法解決「畫面感搜尋」，問題明確、被正確理解，解法直接對應。三個真實 TVBS 新聞案例可直接佐證。" data-en="Existing OpenSearch + manual search cannot address visual mood search. The problem is clearly defined and the solution maps directly to it. Three verified TVBS news cases support this.">現有 OpenSearch + 人工搜圖無法解決「畫面感搜尋」，問題明確、被正確理解，解法直接對應。三個真實 TVBS 新聞案例可直接佐證。</td>
       </tr>
       <tr>
         <td data-zh="AI 關鍵角色" data-en="AI as an Enabler">AI 關鍵角色</td>
         <td>20%</td>
-        <td data-zh="沒有 CLIP，「無標記影像的語意搜尋」根本不可行。AI 讓不可行的事變可行，而非只是加速" data-en="Without CLIP, semantic search of untagged images is fundamentally impossible. AI makes the impossible possible — not just faster">沒有 CLIP，「無標記影像的語意搜尋」根本不可行。AI 讓不可行的事變可行，而非只是加速</td>
+        <td data-zh="沒有 CLIP，「無標記影像的語意搜尋」根本不可行。AI 讓不可行的事變可行，而非只是加速。" data-en="Without CLIP, semantic search of untagged images is fundamentally impossible. AI makes the impossible possible — not just faster.">沒有 CLIP，「無標記影像的語意搜尋」根本不可行。AI 讓不可行的事變可行，而非只是加速。</td>
       </tr>
       <tr>
         <td data-zh="導入可行性" data-en="Adoption Readiness">導入可行性</td>
         <td>20%</td>
-        <td data-zh="符合現有工作流程；可先以自有圖庫模擬資料建立 Prototype，並在提案中說明真實資料來源、授權與風險" data-en="Compatible with existing workflows; Prototype uses simulated data from owned library, with real data sources, licensing, and risk documented in the proposal">符合現有工作流程；可先以自有圖庫模擬資料建立 Prototype，並在提案中說明真實資料來源、授權與風險</td>
+        <td data-zh="符合現有工作流程；以 TVBS 已發布配圖建立 Prototype 資料庫，說明真實資料來源、授權與風險處理方式。" data-en="Compatible with existing workflows; Prototype database built from TVBS published images, with data sources, licensing, and risk handling documented.">符合現有工作流程；以 TVBS 已發布配圖建立 Prototype 資料庫，說明真實資料來源、授權與風險處理方式。</td>
       </tr>
     </tbody>
   </table>
@@ -332,8 +364,42 @@ nav a:hover, nav a.active { color:#fff; }
     <h3 data-zh="核心論點：AI 不可或缺性" data-en="Core Argument: AI Indispensability">核心論點：AI 不可或缺性</h3>
     <p data-zh="現有系統（OpenSearch）能做到的是「<em class='ph-accent'>事件級搜尋</em>」——你必須知道要找哪篇新聞。CLIP 補足的是「<em class='ph-accent'>畫面級搜尋</em>」——你只知道要的畫面長什麼樣子，不知道它在哪篇新聞裡。這是現有系統的<strong>結構性盲點</strong>，不是優化問題，而是根本做不到的事。沒有 CLIP，這個需求永遠無法被滿足。" data-en="The existing system (OpenSearch) enables <em class='ph-accent'>event-level search</em> — you must know which story you want. CLIP fills in <em class='ph-accent'>visual-level search</em> — you only know what the image should look like. This is a <strong>structural blind spot</strong> in the current system — not an optimization problem, but something that fundamentally cannot be done today. Without CLIP, this need can never be met.">現有系統（OpenSearch）能做到的是「<em class="ph-accent">事件級搜尋</em>」——你必須知道要找哪篇新聞。CLIP 補足的是「<em class="ph-accent">畫面級搜尋</em>」——你只知道要的畫面長什麼樣子，不知道它在哪篇新聞裡。這是現有系統的<strong>結構性盲點</strong>，不是優化問題，而是根本做不到的事。沒有 CLIP，這個需求永遠無法被滿足。</p>
   </div>
+</section>
 
-  <div class="notice" data-zh="※ 本節「現有搜圖方式」部分為基於產業通則的推論，實際 TVBS 內部系統細節以團隊自身掌握的資訊為準，提案前建議與相關部門確認現況後再定稿。" data-en="※ The 'Current Image Search Methods' section is based on general industry practices. Actual TVBS internal system details should be confirmed with relevant departments before finalizing the proposal.">※ 本節「現有搜圖方式」部分為基於產業通則的推論，實際 TVBS 內部系統細節以團隊自身掌握的資訊為準，提案前建議與相關部門確認現況後再定稿。</div>
+<section class="section fade-in" id="risks">
+  <div class="section-header">
+    <span class="section-num">3.5 —</span>
+    <h2 class="section-title" data-zh="技術限制與風險（誠實說明）" data-en="Technical Limitations & Risks (Honest Assessment)">技術限制與風險（誠實說明）</h2>
+  </div>
+
+  <div class="limit-grid">
+    <div class="limit-item">
+      <p class="limit-title" data-zh="中文查詢準確度有限" data-en="Chinese Query Accuracy">中文查詢準確度有限</p>
+      <p class="limit-body" data-zh="CLIP 主要以英文訓練，中文查詢效果可能不如英文。Prototype 階段需同時測試中英文輸入，找出較佳的描述方式。" data-en="CLIP was primarily trained on English data. Chinese query performance may be weaker. The Prototype phase will test both languages to find the most effective input approach.">CLIP 主要以英文訓練，中文查詢效果可能不如英文。Prototype 階段需同時測試中英文輸入，找出較佳的描述方式。</p>
+    </div>
+    <div class="limit-item">
+      <p class="limit-title" data-zh="有效描述長度約 10–13 字" data-en="Effective Input ~10–13 Characters">有效描述長度約 10–13 字</p>
+      <p class="limit-body" data-zh="超過此長度效果不會更好。使用者需要學習如何精簡描述畫面，例如「豬隻農場牧場」比「關於台灣豬病疫情的農場場景」更有效。" data-en="Longer descriptions don't improve results. Users need to learn concise visual descriptions — e.g., 'pig farm livestock' works better than 'farm scene related to Taiwan swine disease news'.">超過此長度效果不會更好。使用者需要學習如何精簡描述畫面，例如「豬隻農場牧場」比「關於台灣豬病疫情的農場場景」更有效。</p>
+    </div>
+    <div class="limit-item">
+      <p class="limit-title" data-zh="無法辨識特定事件或人物" data-en="Cannot Identify Specific Events or People">無法辨識特定事件或人物</p>
+      <p class="limit-body" data-zh="CLIP 做的是「畫面感比對」，無法搜「山陀兒颱風的畫面」或特定政治人物。這類事件識別需求仍需現有 OpenSearch 系統。" data-en="CLIP does visual similarity matching — it cannot search for 'footage from Typhoon Shanshan' or a specific public figure. Those event-identification tasks still require the existing OpenSearch system.">CLIP 做的是「畫面感比對」，無法搜「山陀兒颱風的畫面」或特定政治人物。這類事件識別需求仍需現有 OpenSearch 系統。</p>
+    </div>
+    <div class="limit-item">
+      <p class="limit-title" data-zh="結果是相似，不是完全相符" data-en="Results Are Similar, Not Exact">結果是相似，不是完全相符</p>
+      <p class="limit-body" data-zh="語意搜尋回傳的是「視覺相似」的圖片，仍需人工判斷最終選圖是否合用。系統是輔助工具，不是自動決策。" data-en="Semantic search returns visually similar images. Human judgment is still required for final selection. The system is a decision-support tool, not an automated decision-maker.">語意搜尋回傳的是「視覺相似」的圖片，仍需人工判斷最終選圖是否合用。系統是輔助工具，不是自動決策。</p>
+    </div>
+    <div class="limit-item">
+      <p class="limit-title" data-zh="Prototype 初期資料量有限" data-en="Limited Prototype Dataset">Prototype 初期資料量有限</p>
+      <p class="limit-body" data-zh="初期資料庫 500 張，覆蓋範圍有限，可能出現找不到理想候選圖的情況。擴充至完整圖庫需在第三階段（深化期）推進。" data-en="Initial database of 500 images has limited coverage — some searches may not return ideal candidates. Scaling to the full library is planned for Phase 3 (deepening stage).">初期資料庫 500 張，覆蓋範圍有限，可能出現找不到理想候選圖的情況。擴充至完整圖庫需在第三階段（深化期）推進。</p>
+    </div>
+    <div class="limit-item">
+      <p class="limit-title" data-zh="使用習慣需要調整" data-en="Requires Habit Change">使用習慣需要調整</p>
+      <p class="limit-body" data-zh="使用者需要從「輸入事件關鍵字」改為「描述畫面長什麼樣子」，有學習曲線。初期需要配套說明和範例引導。" data-en="Users need to shift from 'type event keywords' to 'describe what the image looks like' — there is a learning curve. Initial onboarding guidance and examples will be needed.">使用者需要從「輸入事件關鍵字」改為「描述畫面長什麼樣子」，有學習曲線。初期需要配套說明和範例引導。</p>
+    </div>
+  </div>
+
+  <div class="notice" data-zh="※ 本節限制說明為提案誠信的一部分。我們認為清楚說明邊界，比過度承諾更重要。上述限制已納入 Prototype 設計與導入計畫中。" data-en="※ This limitations section is part of our proposal's integrity. We believe clearly stating boundaries matters more than overpromising. All limitations above are accounted for in our Prototype design and deployment plan.">※ 本節限制說明為提案誠信的一部分。我們認為清楚說明邊界，比過度承諾更重要。上述限制已納入 Prototype 設計與導入計畫中。</div>
 </section>
 
 </div>
