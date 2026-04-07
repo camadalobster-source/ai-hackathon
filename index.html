@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLIP 技術簡報 — TVBS AI Hackathon 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=DM+Mono:wght@400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#0f0f0d; --ink-2:#3a3a35; --ink-3:#7a7a72;
+  --paper:#f5f3ee; --paper-2:#eceae3; --paper-3:#e2dfd6;
+  --accent:#c8420a; --accent-light:#f5ede8;
+  --blue:#1a4a8a; --blue-light:#e8eef7;
+  --teal:#0e6655; --teal-light:#e4f2ef;
+  --amber:#8a5a0a; --amber-light:#faf0e0;
+  --red:#8a1a1a; --red-light:#f7e8e8;
+  --border:rgba(15,15,13,0.1); --border-strong:rgba(15,15,13,0.2);
+  --max:860px;
+}
+html { scroll-behavior:smooth; }
+body { font-family:'Noto Serif TC',serif; background:var(--paper); color:var(--ink); line-height:1.8; font-size:15px; }
+
+/* LANG BAR */
+#lang-bar {
+  position:fixed; top:0; left:0; right:0; z-index:300;
+  height:36px; background:#fff; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:flex-end; padding:0 1.5rem; gap:8px;
+}
+#lang-bar span { font-family:'DM Mono',monospace; font-size:11px; color:var(--ink-3); letter-spacing:0.06em; }
+#lang-toggle {
+  font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.08em;
+  background:var(--ink); color:#fff; border:none; border-radius:4px;
+  padding:5px 14px; cursor:pointer; transition:background 0.2s;
+}
+#lang-toggle:hover { background:var(--accent); }
+
+/* PROGRESS BAR */
+#progress-bar { position:fixed; top:36px; left:0; height:3px; width:0%; background:var(--accent); z-index:200; transition:width 0.1s linear; }
+
+/* NAV */
+nav { position:sticky; top:36px; z-index:100; background:var(--ink); padding:0 2rem; display:flex; align-items:center; height:48px; overflow-x:auto; scrollbar-width:none; margin-top:36px; }
+nav::-webkit-scrollbar { display:none; }
+nav a { font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.45); text-decoration:none; white-space:nowrap; padding:0 1.1rem; height:48px; display:flex; align-items:center; border-right:1px solid rgba(255,255,255,0.07); transition:color 0.2s, background 0.2s; letter-spacing:0.06em; }
+nav a:first-child { padding-left:0; }
+nav a:hover { color:rgba(255,255,255,0.85); }
+nav a.active { color:#fff; background:rgba(255,255,255,0.06); }
+.nav-tag { font-family:'DM Mono',monospace; font-size:10px; color:var(--accent); margin-left:auto; white-space:nowrap; padding-left:1.5rem; letter-spacing:0.06em; }
+.nav-lock { font-size:9px; margin-left:4px; opacity:0.5; }
+
+/* HERO */
+.hero { padding:5rem 2rem 4rem; max-width:var(--max); margin:0 auto; border-bottom:1px solid var(--border); }
+.hero-eyebrow { font-family:'DM Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:1.5rem; opacity:0; animation:fadeUp 0.6s 0.1s forwards; }
+.hero h1 { font-family:'Syne',sans-serif; font-size:clamp(2.4rem,5.5vw,4rem); font-weight:800; line-height:1.05; letter-spacing:-0.02em; margin-bottom:1.5rem; opacity:0; animation:fadeUp 0.7s 0.2s forwards; }
+.hero h1 em { font-style:normal; color:var(--accent); }
+.hero-desc { font-size:16px; color:var(--ink-2); max-width:560px; line-height:1.75; margin-bottom:2.5rem; opacity:0; animation:fadeUp 0.7s 0.3s forwards; }
+.hero-chips { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:2.5rem; opacity:0; animation:fadeUp 0.7s 0.35s forwards; }
+.hero-chip { font-family:'DM Mono',monospace; font-size:11px; padding:5px 12px; border:1px solid var(--border-strong); border-radius:20px; color:var(--ink-2); letter-spacing:0.04em; }
+.hero-meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1.5rem; padding-top:2rem; border-top:1px solid var(--border); opacity:0; animation:fadeUp 0.7s 0.4s forwards; }
+.hero-meta-item { font-family:'DM Mono',monospace; font-size:11px; color:var(--ink-3); }
+.hero-meta-item strong { display:block; color:var(--ink); font-size:13px; margin-bottom:3px; font-family:'Noto Serif TC',serif; }
+
+/* PAGE */
+.page { max-width:var(--max); margin:0 auto; padding:0 2rem 8rem; }
+
+/* SECTION */
+.section { padding:4.5rem 0; border-bottom:1px solid var(--border); }
+.section:last-child { border-bottom:none; }
+.section-header { display:flex; align-items:baseline; gap:1rem; margin-bottom:2.5rem; }
+.section-num { font-family:'DM Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:0.1em; white-space:nowrap; }
+.section-title { font-family:'Syne',sans-serif; font-size:1.65rem; font-weight:700; letter-spacing:-0.01em; }
+.sub-heading { font-size:14px; font-weight:600; color:var(--ink); margin:2rem 0 1rem; display:flex; align-items:center; gap:8px; }
+.sub-heading::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* CARDS */
+.card-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
+.card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:1.15rem 1.25rem; transition:transform 0.2s, box-shadow 0.2s; }
+.card:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.06); }
+.card-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; color:var(--ink-3); }
+.card-title { font-size:14px; font-weight:600; margin-bottom:6px; color:var(--ink); }
+.card-body { font-size:13px; color:var(--ink-2); line-height:1.65; }
+.card-blue  { border-left:3px solid var(--blue);   background:var(--blue-light);   } .card-blue .card-label  { color:var(--blue); }
+.card-teal  { border-left:3px solid var(--teal);   background:var(--teal-light);   } .card-teal .card-label  { color:var(--teal); }
+.card-amber { border-left:3px solid var(--amber);  background:var(--amber-light);  } .card-amber .card-label { color:var(--amber); }
+.card-red   { border-left:3px solid var(--red);    background:var(--red-light);    } .card-red .card-label   { color:var(--red); }
+.card-accent{ border-left:3px solid var(--accent); background:var(--accent-light); } .card-accent .card-label{ color:var(--accent); }
+
+/* CALLOUT */
+.callout { background:var(--paper-2); border:1px solid var(--border-strong); border-radius:8px; padding:1.25rem 1.5rem; margin:1.5rem 0; }
+.callout-title { font-size:13px; font-weight:600; margin-bottom:6px; color:var(--ink); }
+.callout-body { font-size:13px; color:var(--ink-2); line-height:1.7; }
+
+/* STEPS */
+.steps { margin:1.5rem 0; }
+.step { display:flex; gap:14px; margin-bottom:16px; align-items:flex-start; }
+.step-num { width:26px; height:26px; min-width:26px; background:var(--ink); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace; font-size:11px; }
+.step-content { flex:1; padding-top:2px; }
+.step-title { font-size:14px; font-weight:600; margin-bottom:4px; color:var(--ink); }
+.step-body { font-size:13px; color:var(--ink-2); line-height:1.65; }
+
+/* BADGE */
+.badge { display:inline-block; font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:3px; margin:0 3px 3px 0; letter-spacing:0.04em; }
+.badge-blue   { background:var(--blue-light);   color:var(--blue); }
+.badge-teal   { background:var(--teal-light);   color:var(--teal); }
+.badge-amber  { background:var(--amber-light);  color:var(--amber); }
+.badge-red    { background:var(--red-light);    color:var(--red); }
+.badge-accent { background:var(--accent-light); color:var(--accent); }
+.badge-ink    { background:var(--paper-3);      color:var(--ink-2); }
+
+/* TABLE */
+.compare-table { width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:13px; }
+.compare-table th { background:var(--ink); color:#fff; padding:10px 14px; text-align:left; font-family:'DM Mono',monospace; font-size:11px; font-weight:400; letter-spacing:0.06em; }
+.compare-table td { padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--ink-2); line-height:1.55; }
+.compare-table tr:last-child td { border-bottom:none; }
+.compare-table tr:nth-child(even) td { background:var(--paper-2); }
+.compare-table td:first-child { font-weight:600; color:var(--ink); }
+
+/* SCORE */
+.score-list { margin:1.5rem 0; }
+.score-item { display:flex; align-items:center; gap:12px; margin-bottom:11px; }
+.score-label { font-size:13px; color:var(--ink-2); min-width:140px; }
+.score-track { flex:1; height:5px; background:var(--paper-3); border-radius:3px; overflow:hidden; }
+.score-fill { height:5px; border-radius:3px; transition:width 1s ease; }
+.score-val { font-family:'DM Mono',monospace; font-size:11px; min-width:38px; text-align:right; }
+
+/* LIMIT */
+.limit-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:1.25rem 0; }
+.limit-item { background:#fff; border:1px solid var(--border); border-top:3px solid #c0392b; border-radius:6px; padding:0.9rem 1rem; }
+.limit-title { font-size:13px; font-weight:600; color:#c0392b; margin-bottom:4px; }
+.limit-body { font-size:12px; color:var(--ink-2); line-height:1.6; }
+
+/* NOTICE */
+.notice { font-family:'DM Mono',monospace; font-size:11px; color:var(--ink-3); background:var(--paper-2); border-radius:4px; padding:10px 14px; margin-top:14px; line-height:1.65; }
+.tag-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+
+/* PASSWORD GATE SECTION */
+#gate-section {
+  padding:4.5rem 0;
+}
+.gate-card {
+  background:#fff;
+  border:1px solid var(--border-strong);
+  border-radius:16px;
+  padding:3rem 2.5rem;
+  text-align:center;
+  max-width:420px;
+  margin:0 auto;
+  box-shadow:0 8px 48px rgba(0,0,0,0.07);
+}
+.gate-lock-icon {
+  width:56px; height:56px;
+  background:var(--paper-2);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 1.5rem;
+  font-size:22px;
+}
+.gate-title { font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:700; margin-bottom:8px; }
+.gate-desc { font-family:'DM Mono',monospace; font-size:11px; color:var(--ink-3); margin-bottom:2rem; line-height:1.7; letter-spacing:0.04em; }
+.gate-input {
+  width:100%; font-family:'DM Mono',monospace; font-size:14px;
+  letter-spacing:0.14em; text-transform:uppercase;
+  padding:12px 16px; border:1.5px solid var(--border-strong);
+  border-radius:8px; background:var(--paper); color:var(--ink);
+  text-align:center; outline:none; transition:border-color 0.2s;
+  margin-bottom:10px; display:block;
+}
+.gate-input:focus { border-color:var(--accent); }
+.gate-input.error { border-color:var(--red); animation:shake 0.35s ease; }
+.gate-btn {
+  width:100%; font-family:'DM Mono',monospace; font-size:12px;
+  letter-spacing:0.1em; background:var(--ink); color:#fff;
+  border:none; border-radius:8px; padding:12px 0;
+  cursor:pointer; transition:background 0.2s, transform 0.1s;
+}
+.gate-btn:hover { background:var(--accent); }
+.gate-btn:active { transform:scale(0.98); }
+.gate-error { font-family:'DM Mono',monospace; font-size:11px; color:var(--red); margin-top:10px; min-height:18px; }
+.gate-attempts { font-family:'DM Mono',monospace; font-size:10px; color:var(--ink-3); margin-top:16px; }
+.gate-cooldown { font-family:'DM Mono',monospace; font-size:12px; color:var(--amber); background:var(--amber-light); border-radius:6px; padding:10px 14px; margin-top:10px; display:none; }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.fade-in { opacity:0; transform:translateY(20px); transition:opacity 0.6s ease, transform 0.6s ease; }
+.fade-in.visible { opacity:1; transform:translateY(0); }
+
+@media (max-width:620px) {
+  .card-grid, .limit-grid { grid-template-columns:1fr; }
+  .hero h1 { font-size:2.1rem; }
+  nav a { font-size:10px; padding:0 0.75rem; }
+  .gate-card { padding:2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div id="lang-bar">
+  <span id="lang-label" data-zh="目前語言：中文" data-en="Current Language: English">目前語言：中文</span>
+  <button id="lang-toggle" onclick="toggleLang()">EN</button>
+</div>
+
+<nav id="main-nav">
+  <a href="#tech" class="nav-link" data-zh="01 技術原理" data-en="01 Technology">01 技術原理</a>
+  <a href="#news" class="nav-link" data-zh="02 新聞業應用" data-en="02 News Industry">02 新聞業應用</a>
+  <a href="#gate-section" class="nav-link" data-zh="03 TVBS 提案方向 🔒" data-en="03 TVBS Proposal 🔒">03 TVBS 提案方向 🔒</a>
+  <span class="nav-tag">TVBS AI Hackathon 2026</span>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <p class="hero-eyebrow">Research Brief — CLIP Technology</p>
+  <h1 data-zh="用自然語言<br>搜尋影像的<br><em>AI 技術</em>" data-en="The <em>AI Technology</em><br>That Searches Images<br>with Natural Language">用自然語言<br>搜尋影像的<br><em>AI 技術</em></h1>
+  <p class="hero-desc" data-zh="本文件整合 CLIP 技術說明、新聞業應用分析與 TVBS Hackathon 提案方向，作為第一階段書面提案的知識基礎。Section 03 為內部提案資訊，需要密碼進入。" data-en="This document consolidates CLIP technology, news industry applications, and the TVBS Hackathon proposal direction. Section 03 contains internal proposal information and requires a password to access.">本文件整合 CLIP 技術說明、新聞業應用分析與 TVBS Hackathon 提案方向，作為第一階段書面提案的知識基礎。Section 03 為內部提案資訊，需要密碼進入。</p>
+  <div class="hero-chips">
+    <span class="hero-chip">OpenAI CLIP</span>
+    <span class="hero-chip" data-zh="MIT 開源授權" data-en="MIT License">MIT 開源授權</span>
+    <span class="hero-chip" data-zh="Zero-shot 搜尋" data-en="Zero-shot Search">Zero-shot 搜尋</span>
+    <span class="hero-chip" data-zh="新聞產製應用" data-en="Newsroom Application">新聞產製應用</span>
+    <span class="hero-chip">Hackathon Phase 1</span>
+  </div>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><strong data-zh="技術全名" data-en="Full Name">技術全名</strong>Contrastive Language–Image Pre-training</div>
+    <div class="hero-meta-item"><strong data-zh="開發方" data-en="Developer">開發方</strong>OpenAI (2021)</div>
+    <div class="hero-meta-item"><strong data-zh="訓練規模" data-en="Training Scale">訓練規模</strong><span data-zh="4 億組圖文配對" data-en="400M image-text pairs">4 億組圖文配對</span></div>
+    <div class="hero-meta-item"><strong data-zh="授權方式" data-en="License">授權方式</strong><span data-zh="MIT 開源，共 9 個模型版本" data-en="MIT, 9 model variants">MIT 開源，共 9 個模型版本</span></div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ═══ SECTION 01 ═══ -->
+<section class="section fade-in" id="tech">
+  <div class="section-header">
+    <span class="section-num">01 —</span>
+    <h2 class="section-title" data-zh="CLIP 技術說明" data-en="CLIP Technology Overview">CLIP 技術說明</h2>
+  </div>
+  <div class="callout">
+    <p class="callout-title" data-zh="一句話理解 CLIP" data-en="CLIP in One Sentence">一句話理解 CLIP</p>
+    <p class="callout-body" data-zh="CLIP 不是分類系統，也不是生成系統，而是一個<strong>語意橋接器</strong>——它讓「文字」與「圖片」能在同一個向量空間中比對相似度。輸入文字，找出最相符的圖片；輸入圖片，找出最相符的文字描述。" data-en="CLIP is neither a classification system nor a generative system. It is a <strong>semantic bridge</strong> — mapping both text and images into a shared vector space for similarity comparison. Input text to find matching images; input an image to find matching text.">CLIP 不是分類系統，也不是生成系統，而是一個<strong>語意橋接器</strong>——它讓「文字」與「圖片」能在同一個向量空間中比對相似度。輸入文字，找出最相符的圖片；輸入圖片，找出最相符的文字描述。</p>
+  </div>
+  <p class="sub-heading" data-zh="技術運作原理" data-en="How It Works">技術運作原理</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><p class="step-title" data-zh="對比學習（Contrastive Learning）" data-en="Contrastive Learning">對比學習（Contrastive Learning）</p><p class="step-body" data-zh="CLIP 同時訓練「文字編碼器」與「圖片編碼器」。語意相近的圖文配對在向量空間中被拉近，不相關的被推遠。這是 Zero-shot 能力的根本來源。" data-en="CLIP simultaneously trains a text encoder and an image encoder. Semantically similar image-text pairs are pulled closer in the shared vector space, while unrelated pairs are pushed apart. This is the core mechanism behind Zero-shot capability.">CLIP 同時訓練「文字編碼器」與「圖片編碼器」。語意相近的圖文配對在向量空間中被拉近，不相關的被推遠。這是 Zero-shot 能力的根本來源。</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><p class="step-title" data-zh="訓練資料規模（Notebook LM 未提及）" data-en="Training Scale (Not covered by Notebook LM)">訓練資料規模（Notebook LM 未提及）</p><p class="step-body" data-zh="訓練資料為 <strong>4 億組圖文配對</strong>（WebImageText 資料集），全部來自網路爬取。訓練資料集本身是 OpenAI 私有的，工程師取得的是模型權重與程式碼，而非原始訓練資料。" data-en="Training data consists of <strong>400 million image-text pairs</strong> (WebImageText dataset), all scraped from the internet. The training dataset is proprietary to OpenAI. Engineers receive model weights and code only.">訓練資料為 <strong>4 億組圖文配對</strong>（WebImageText 資料集），全部來自網路爬取。訓練資料集本身是 OpenAI 私有的，工程師取得的是模型權重與程式碼，而非原始訓練資料。</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><p class="step-title" data-zh="Zero-shot：開箱即用，無需重訓" data-en="Zero-shot: Ready to Use, No Retraining">Zero-shot：開箱即用，無需重訓</p><p class="step-body" data-zh="CLIP 不需要預先設定分類桶，也不需要重新訓練。給它一張圖片加上幾個自然語言描述選項，它計算相似度並回傳最匹配的結果，能即時處理從未見過的視覺概念。" data-en="CLIP requires no predefined categories and no retraining. Give it an image and several natural language options; it calculates similarity scores and returns the best match — including concepts it has never explicitly seen.">CLIP 不需要預先設定分類桶，也不需要重新訓練。給它一張圖片加上幾個自然語言描述選項，它計算相似度並回傳最匹配的結果，能即時處理從未見過的視覺概念。</p></div></div>
+  </div>
+  <p class="sub-heading" data-zh="解決了哪些過往成本過高的痛點" data-en="Pain Points It Solves">解決了哪些過往成本過高的痛點</p>
+  <div class="card-grid">
+    <div class="card card-blue fade-in"><p class="card-label" data-zh="痛點一" data-en="Pain Point 1">痛點一</p><p class="card-title" data-zh="省下天價標記成本" data-en="Eliminates Costly Labeling">省下天價標記成本</p><p class="card-body" data-zh="ImageNet 動用 25,000 名工人標記 1,400 萬張圖。CLIP 直接從網路現成圖文資料學習，大幅降低人力成本。" data-en="ImageNet required 25,000 workers to label 14M images. CLIP learns from existing web image-text pairs, dramatically cutting costs.">ImageNet 動用 25,000 名工人標記 1,400 萬張圖。CLIP 直接從網路現成圖文資料學習，大幅降低人力成本。</p></div>
+    <div class="card card-blue fade-in"><p class="card-label" data-zh="痛點二" data-en="Pain Point 2">痛點二</p><p class="card-title" data-zh="打破「一模型一任務」" data-en="Breaks One-Model-One-Task">打破「一模型一任務」</p><p class="card-body" data-zh="傳統模型新增類別需重新收集資料並微調。CLIP 只要用自然語言告訴它新分類名稱，即可立刻執行。" data-en="Traditional models need new data and fine-tuning for new categories. CLIP only needs a natural language description — ready immediately.">傳統模型新增類別需重新收集資料並微調。CLIP 只要用自然語言告訴它新分類名稱，即可立刻執行。</p></div>
+    <div class="card card-blue fade-in"><p class="card-label" data-zh="痛點三" data-en="Pain Point 3">痛點三</p><p class="card-title" data-zh="解決「實驗室好、現實差」" data-en="Closes the Lab-to-Reality Gap">解決「實驗室好、現實差」</p><p class="card-body" data-zh="傳統模型針對測試集死背，遇到素描或不同角度就失敗。CLIP 在真實多變環境下展現更高穩定性。" data-en="Traditional models fail on sketches or unusual angles. CLIP demonstrates much higher robustness in real-world conditions.">傳統模型針對測試集死背，遇到素描或不同角度就失敗。CLIP 在真實多變環境下展現更高穩定性。</p></div>
+    <div class="card card-blue fade-in"><p class="card-label" data-zh="痛點四" data-en="Pain Point 4">痛點四</p><p class="card-title" data-zh="跨模態搜尋成為可能" data-en="Cross-Modal Search Possible">跨模態搜尋成為可能</p><p class="card-body" data-zh="可用文字搜圖、用圖片搜圖，不需人工標註的 metadata，特別適合缺乏完整標記的大型影像素材庫。" data-en="Text-to-image and image-to-image search without manual metadata — ideal for large libraries lacking complete tagging.">可用文字搜圖、用圖片搜圖，不需人工標註的 metadata，特別適合缺乏完整標記的大型影像素材庫。</p></div>
+  </div>
+  <p class="sub-heading" data-zh="Token 上限（重要技術限制）" data-en="Token Limit — Critical Constraint">Token 上限（重要技術限制）</p>
+  <div class="callout" style="border-left:3px solid var(--amber); background:var(--amber-light);">
+    <p class="callout-title" style="color:var(--amber);" data-zh="有效文字輸入：約 10–13 個中文字" data-en="Effective Text Input: ~10–13 Chinese Characters">有效文字輸入：約 10–13 個中文字</p>
+    <p class="callout-body" data-zh="CLIP 文字輸入上限為 77 個 token，但<strong>實際有效長度僅約 20 個 token</strong>（約 10–13 個中文字）。超過後影響力快速下降。搜尋描述要精簡：「工廠火災濃煙」比長句更有效。<br><br><strong>升級路徑：</strong>Long-CLIP（2024）可大幅提升有效長度，在長文字描述的圖片檢索上比原始 CLIP 提升約 20%，且可直接替換使用。" data-en="CLIP's text input limit is 77 tokens, but the <strong>actual effective length is only ~20 tokens</strong> (~10–13 Chinese characters). Keep search queries concise: 'factory fire black smoke' works better than long sentences.<br><br><strong>Upgrade path:</strong> Long-CLIP (2024) significantly extends effective length, improving long-description image retrieval by ~20% and can be swapped in as a drop-in replacement.">CLIP 文字輸入上限為 77 個 token，但<strong>實際有效長度僅約 20 個 token</strong>（約 10–13 個中文字）。超過後影響力快速下降。搜尋描述要精簡：「工廠火災濃煙」比長句更有效。<br><br><strong>升級路徑：</strong>Long-CLIP（2024）可大幅提升有效長度，在長文字描述的圖片檢索上比原始 CLIP 提升約 20%，且可直接替換使用。</p>
+  </div>
+  <p class="sub-heading" data-zh="已知技術限制（使用前必讀）" data-en="Known Technical Limitations">已知技術限制（使用前必讀）</p>
+  <div class="limit-grid">
+    <div class="limit-item fade-in"><p class="limit-title" data-zh="OCR 能力不穩定" data-en="Unreliable OCR">OCR 能力不穩定</p><p class="limit-body" data-zh="圖片文字辨識準確率約 50%。適合輔助初篩，不適合作為精確文字提取主力工具。" data-en="Image text recognition accuracy ~50%. For preliminary screening only — not for precise text extraction.">圖片文字辨識準確率約 50%。適合輔助初篩，不適合作為精確文字提取主力工具。</p></div>
+    <div class="limit-item fade-in"><p class="limit-title" data-zh="無法計數與空間判斷" data-en="Cannot Count or Assess Space">無法計數與空間判斷</p><p class="limit-body" data-zh="「幾個人」、「物件距離」等任務表現接近隨機猜測。不適用需要精確數量的報導場景。" data-en="Counting objects or estimating distances performs near random chance. Unsuitable for reporting requiring precise quantities.">「幾個人」、「物件距離」等任務表現接近隨機猜測。不適用需要精確數量的報導場景。</p></div>
+    <div class="limit-item fade-in"><p class="limit-title" data-zh="細微差異辨識能力弱" data-en="Weak Fine-Grained Recognition">細微差異辨識能力弱</p><p class="limit-body" data-zh="特定汽車型號、飛機機型、品牌招牌等細節辨識，不如任務專用模型。" data-en="Specific car models, aircraft variants, or brand signage recognition is inferior to task-specific models.">特定汽車型號、飛機機型、品牌招牌等細節辨識，不如任務專用模型。</p></div>
+    <div class="limit-item fade-in"><p class="limit-title" data-zh="事件識別能力不足" data-en="Cannot Identify Specific Events">事件識別能力不足</p><p class="limit-body" data-zh="「這是山陀兒颱風的畫面」這類需識別特定歷史事件的任務，CLIP 做不到。應交給 OpenSearch。" data-en="Tasks like 'identify this as Typhoon Shanshan footage' are beyond CLIP. Use OpenSearch for event identification.">「這是山陀兒颱風的畫面」這類需識別特定歷史事件的任務，CLIP 做不到。應交給 OpenSearch。</p></div>
+    <div class="limit-item fade-in"><p class="limit-title" data-zh="偏見與道德風險" data-en="Bias and Ethical Risks">偏見與道德風險</p><p class="limit-body" data-zh="若分類選項含強烈負面詞彙，有 ~32.3% 機率將 0–20 歲年輕人錯誤歸類。用於人物標記需特別謹慎。" data-en="~32.3% probability of incorrectly categorizing young people under negative labels. Exercise extreme caution in person-tagging.">若分類選項含強烈負面詞彙，有 ~32.3% 機率將 0–20 歲年輕人錯誤歸類。用於人物標記需特別謹慎。</p></div>
+    <div class="limit-item fade-in"><p class="limit-title" data-zh="無法生成文字描述" data-en="Cannot Generate Text">無法生成文字描述</p><p class="limit-body" data-zh="CLIP 是「選擇題」模型，<strong>無法生成</strong>任何文字。需要 alt text 等功能，必須串接 Vision-Language Model（如 GPT-4V）。" data-en="CLIP is a matching model — it <strong>cannot generate</strong> any text. Alt text generation requires a separate Vision-Language Model (e.g., GPT-4V).">CLIP 是「選擇題」模型，<strong>無法生成</strong>任何文字。需要 alt text 等功能，必須串接 Vision-Language Model（如 GPT-4V）。</p></div>
+  </div>
+  <p class="sub-heading" data-zh="能力強弱總覽" data-en="Capability Overview">能力強弱總覽</p>
+  <div class="score-list">
+    <div class="score-item"><span class="score-label" data-zh="零樣本分類" data-en="Zero-shot Classification">零樣本分類</span><div class="score-track"><div class="score-fill" style="width:0%" data-width="90%" data-color="#1a4a8a"></div></div><span class="score-val" style="color:#1a4a8a" data-zh="強" data-en="Strong">強</span></div>
+    <div class="score-item"><span class="score-label" data-zh="圖文語意搜尋" data-en="Text-Image Search">圖文語意搜尋</span><div class="score-track"><div class="score-fill" style="width:0%" data-width="88%" data-color="#1a4a8a"></div></div><span class="score-val" style="color:#1a4a8a" data-zh="強" data-en="Strong">強</span></div>
+    <div class="score-item"><span class="score-label" data-zh="通用場景辨識" data-en="Scene Recognition">通用場景辨識</span><div class="score-track"><div class="score-fill" style="width:0%" data-width="80%" data-color="#1a4a8a"></div></div><span class="score-val" style="color:#1a4a8a" data-zh="強" data-en="Strong">強</span></div>
+    <div class="score-item"><span class="score-label" data-zh="OCR 文字識別" data-en="OCR Recognition">OCR 文字識別</span><div class="score-track"><div class="score-fill" style="width:0%" data-width="38%" data-color="#8a5a0a"></div></div><span class="score-val" style="color:#8a5a0a" data-zh="弱中" data-en="Weak-Mid">弱中</span></div>
+    <div class="score-item"><span class="score-label" data-zh="細微差異辨識" data-en="Fine-Grained">細微差異辨識</span><div class="score-track"><div class="score-fill" style="width:0%" data-width="33%" data-color="#8a5a0a"></div></div><span class="score-val" style="color:#8a5a0a" data-zh="弱中" data-en="Weak-Mid">弱中</span></div>
+    <div class="score-item"><span class="score-label" data-zh="計數與空間判斷" data-en="Counting &amp; Spatial">計數與空間判斷</span><div class="score-track"><div class="score-fill" style="width:0%" data-width="12%" data-color="#8a1a1a"></div></div><span class="score-val" style="color:#8a1a1a" data-zh="弱" data-en="Weak">弱</span></div>
+  </div>
+  <div class="notice" data-zh="※ 授權：CLIP 以 MIT 授權釋出，共 9 個模型版本。訓練資料集（WebImageText）屬 OpenAI 私有，未一併開放。Long-CLIP 為第三方開源升級版本。" data-en="※ License: CLIP is MIT licensed with 9 model variants. Training dataset (WebImageText) is proprietary to OpenAI. Long-CLIP is a third-party open-source upgrade.">※ 授權：CLIP 以 MIT 授權釋出，共 9 個模型版本。訓練資料集（WebImageText）屬 OpenAI 私有，未一併開放。Long-CLIP 為第三方開源升級版本。</div>
+</section>
+
+<!-- ═══ SECTION 02 ═══ -->
+<section class="section fade-in" id="news">
+  <div class="section-header">
+    <span class="section-num">02 —</span>
+    <h2 class="section-title" data-zh="CLIP 在新聞產業的應用" data-en="CLIP Applications in the News Industry">CLIP 在新聞產業的應用</h2>
+  </div>
+  <div class="callout">
+    <p class="callout-title" data-zh="應用判斷大原則" data-en="The Golden Rule">應用判斷大原則</p>
+    <p class="callout-body" data-zh="<strong>✓ 適合：</strong>「找情境、找概念、找畫面感」<br><strong>✗ 不適合：</strong>「算人數、認特定人物、辨識精細型號、識別特定事件、生成任何文字」" data-en="<strong>✓ Good for CLIP:</strong> 'Find scenes, find concepts, find visual mood'<br><strong>✗ Not for CLIP:</strong> 'Count people, identify individuals, recognize precise models, identify events, generate text'"><strong>✓ 適合：</strong>「找情境、找概念、找畫面感」<br><strong>✗ 不適合：</strong>「算人數、認特定人物、辨識精細型號、識別特定事件、生成任何文字」</p>
+  </div>
+  <p class="sub-heading" data-zh="四個核心應用場景" data-en="Four Core Application Scenarios">四個核心應用場景</p>
+  <div class="card-grid">
+    <div class="card card-teal fade-in"><p class="card-label" data-zh="場景一 ✓ 最成熟" data-en="Scenario 1 ✓ Most Mature">場景一 ✓ 最成熟</p><p class="card-title" data-zh="歷史圖庫語意搜尋" data-en="Semantic Image Archive Search">歷史圖庫語意搜尋</p><p class="card-body" data-zh="記者可輸入「電視攝影棚的照片」或「飛機與人群」，直接找出對應新聞照片，無需人工標籤。GDELT Project 已驗證此方法可搜尋超過 19 億張電視新聞畫面。" data-en="Journalists type 'photo of a TV studio' or 'airplane with crowds' to find matching news photos with no manual tagging. GDELT Project validated this across 1.9 billion TV news frames.">記者可輸入「電視攝影棚的照片」或「飛機與人群」，直接找出對應新聞照片，無需人工標籤。GDELT Project 已驗證此方法可搜尋超過 19 億張電視新聞畫面。</p><div class="tag-row"><span class="badge badge-teal" data-zh="已有媒體驗證" data-en="Media-Validated">已有媒體驗證</span></div></div>
+    <div class="card card-teal fade-in"><p class="card-label" data-zh="場景二 △ 輔助初篩" data-en="Scenario 2 △ Screening Aid">場景二 △ 輔助初篩</p><p class="card-title" data-zh="UGC 事實查核輔助" data-en="UGC Fact-Checking Aid">UGC 事實查核輔助</p><p class="card-body" data-zh="地理定位能力可協助比對照片背景是否與聲稱地點相符。語意 OCR 可輔助初步判斷截圖內容。準確率有限，僅適合初篩。" data-en="Geo-localization can help verify whether a photo's background matches the claimed location. Semantic OCR assists with preliminary screenshot assessment. Accuracy is limited — initial screening only.">地理定位能力可協助比對照片背景是否與聲稱地點相符。語意 OCR 可輔助初步判斷截圖內容。準確率有限，僅適合初篩。</p><div class="tag-row"><span class="badge badge-amber" data-zh="準確率有限" data-en="Limited Accuracy">準確率有限</span></div></div>
+    <div class="card card-teal fade-in"><p class="card-label" data-zh="場景三 △ 需額外處理" data-en="Scenario 3 △ Extra Processing">場景三 △ 需額外處理</p><p class="card-title" data-zh="影音素材快速掃描" data-en="Rapid Video Scanning">影音素材快速掃描</p><p class="card-body" data-zh="對影片每幀提取向量，可搜尋特定動作或場景出現的時間點。需先進行影片截幀處理，屬升級版功能，本次提案範圍外。" data-en="Extracting vectors from each frame enables searching for specific actions or scene timestamps. Requires video preprocessing — advanced feature outside current scope.">對影片每幀提取向量，可搜尋特定動作或場景出現的時間點。需先進行影片截幀處理，屬升級版功能，本次提案範圍外。</p><div class="tag-row"><span class="badge badge-ink" data-zh="影片為未來升級方向" data-en="Video: Future Upgrade">影片為未來升級方向</span></div></div>
+    <div class="card card-teal fade-in"><p class="card-label" data-zh="場景四 △ 高風險" data-en="Scenario 4 △ High Risk">場景四 △ 高風險</p><p class="card-title" data-zh="社群惡意圖文初步偵測" data-en="Hateful Content Detection">社群惡意圖文初步偵測</p><p class="card-body" data-zh="可在無需真實標籤的情況下偵測仇恨迷因。但偏見風險高，人工審核不可省略。" data-en="Can detect hateful memes without ground-truth labels. However, bias risk is high — human review is mandatory.">可在無需真實標籤的情況下偵測仇恨迷因。但偏見風險高，人工審核不可省略。</p><div class="tag-row"><span class="badge badge-red" data-zh="偏見風險高" data-en="High Bias Risk">偏見風險高</span></div></div>
+  </div>
+  <p class="sub-heading" data-zh="雷區：這些新聞場景絕對不能用 CLIP" data-en="Danger Zones: Never Use CLIP For These">雷區：這些新聞場景絕對不能用 CLIP</p>
+  <table class="compare-table fade-in">
+    <thead><tr>
+      <th data-zh="新聞場景" data-en="News Scenario">新聞場景</th>
+      <th data-zh="為什麼不適合" data-en="Why It Fails">為什麼不適合</th>
+      <th data-zh="正確做法" data-en="Correct Approach">正確做法</th>
+    </tr></thead>
+    <tbody>
+      <tr><td data-zh="估算抗議群眾人數" data-en="Estimating protest crowd size">估算抗議群眾人數</td><td data-zh="CLIP 不擅長計數，表現接近隨機猜測" data-en="Cannot count — near random guessing">CLIP 不擅長計數，表現接近隨機猜測</td><td data-zh="人工辨識或專用計數模型" data-en="Manual or dedicated counting model">人工辨識或專用計數模型</td></tr>
+      <tr><td data-zh="辨識特定軍武或車款型號" data-en="Identifying specific hardware or vehicle models">辨識特定軍武或車款型號</td><td data-zh="細微差異辨識弱，不如專門訓練的模型" data-en="Fine-grained recognition is weak">細微差異辨識弱，不如專門訓練的模型</td><td data-zh="任務專用辨識模型" data-en="Task-specific model">任務專用辨識模型</td></tr>
+      <tr><td data-zh="犯罪新聞人物標記" data-en="Tagging individuals in crime news">犯罪新聞人物標記</td><td data-zh="偏見風險 ~32.3%，極易引發歧視爭議" data-en="~32.3% bias risk — high discrimination potential">偏見風險 ~32.3%，極易引發歧視爭議</td><td data-zh="人工審核，不使用 AI 自動標記" data-en="Manual review only">人工審核，不使用 AI 自動標記</td></tr>
+      <tr><td data-zh="辨識特定事件（如哪一個颱風）" data-en="Identifying specific events (e.g., which typhoon)">辨識特定事件（如哪一個颱風）</td><td data-zh="CLIP 辨識畫面感，不辨識特定歷史事件" data-en="CLIP recognizes visual mood, not historical events">CLIP 辨識畫面感，不辨識特定歷史事件</td><td data-zh="OpenSearch 事件名稱搜尋" data-en="OpenSearch text search">OpenSearch 事件名稱搜尋</td></tr>
+      <tr><td data-zh="精確提取圖片中的中文文字" data-en="Accurately extracting Chinese text">精確提取圖片中的中文文字</td><td data-zh="中文 OCR 準確率低，有效 token 僅 ~10–13 字" data-en="Low Chinese OCR accuracy; ~10–13 char effective limit">中文 OCR 準確率低，有效 token 僅 ~10–13 字</td><td data-zh="Tesseract、Google Vision API 等專用 OCR" data-en="Tesseract, Google Vision API, etc.">Tesseract、Google Vision API 等專用 OCR</td></tr>
+      <tr><td data-zh="自動生成圖片說明或 alt text" data-en="Auto-generating image captions or alt text">自動生成圖片說明或 alt text</td><td data-zh="CLIP 是比對模型，無法生成任何文字" data-en="CLIP is a matching model — cannot generate text">CLIP 是比對模型，無法生成任何文字</td><td data-zh="串接 Vision-Language Model（GPT-4V、LLaVA）" data-en="Integrate Vision-Language Model (GPT-4V, LLaVA)">串接 Vision-Language Model（GPT-4V、LLaVA）</td></tr>
+    </tbody>
+  </table>
+  <div class="notice" data-zh="※ 「事實查核」與「影音掃描」為依據 CLIP 已驗證技術能力所做的合理推論，非官方實際部署案例。正式導入前需進行任務特定測試（in-domain testing）。" data-en="※ 'Fact-checking' and 'video scanning' are reasonable inferences based on CLIP's verified capabilities — not officially documented deployments. In-domain testing required before implementation.">※ 「事實查核」與「影音掃描」為依據 CLIP 已驗證技術能力所做的合理推論，非官方實際部署案例。正式導入前需進行任務特定測試（in-domain testing）。</div>
+</section>
+
+<!-- ═══ SECTION 03 PASSWORD GATE ═══ -->
+<section class="section fade-in" id="gate-section">
+  <div class="section-header">
+    <span class="section-num">03 —</span>
+    <h2 class="section-title" data-zh="TVBS 提案方向" data-en="TVBS Proposal Direction">TVBS 提案方向</h2>
+  </div>
+  <div class="gate-card">
+    <div class="gate-lock-icon">🔒</div>
+    <p class="gate-title" data-zh="此區塊為內部資訊" data-en="Internal Content">此區塊為內部資訊</p>
+    <p class="gate-desc" data-zh="TVBS 提案方向涉及內部業務策略<br>請輸入密碼進入完整內容" data-en="The TVBS proposal contains internal strategy.<br>Please enter the password to continue.">TVBS 提案方向涉及內部業務策略<br>請輸入密碼進入完整內容</p>
+    <input class="gate-input" id="gate-input" type="password" placeholder="ENTER PASSWORD" autocomplete="off"
+      data-zh-placeholder="輸入密碼" data-en-placeholder="ENTER PASSWORD"
+      onkeydown="if(event.key==='Enter') submitPassword()" />
+    <button class="gate-btn" id="gate-btn" onclick="submitPassword()" data-zh="解鎖並進入" data-en="Unlock &amp; Enter">解鎖並進入</button>
+    <p class="gate-error" id="gate-error"></p>
+    <div class="gate-cooldown" id="gate-cooldown"></div>
+    <p class="gate-attempts" id="gate-attempts"></p>
+  </div>
+</section>
+
+</div>
+
+<script>
+// ── SECURITY CONFIG ──────────────────────────────────────
+// SHA-256 of "FIVE GUTS" — password never stored in plaintext
+const PW_HASH = '91ca9a324307a1847b627ee57ed53475c975506fb602de5e76f300d81acfb27a';
+// Destination page — obscure filename, no hints in this file
+const PROTECTED_PAGE = 'p-f7x2k9.html';
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 60000; // 1 minute
+
+// ── STATE ────────────────────────────────────────────────
+let attempts = parseInt(sessionStorage.getItem('pw_attempts') || '0');
+let lockoutUntil = parseInt(sessionStorage.getItem('pw_lockout') || '0');
+let currentLang = 'zh';
+
+// ── SHA-256 VIA WEB CRYPTO ───────────────────────────────
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── PASSWORD SUBMIT ──────────────────────────────────────
+async function submitPassword() {
+  const now = Date.now();
+  const isEn = currentLang === 'en';
+
+  // Check lockout
+  if (now < lockoutUntil) {
+    const secs = Math.ceil((lockoutUntil - now) / 1000);
+    showCooldown(isEn
+      ? `Too many attempts. Please wait ${secs}s.`
+      : `嘗試次數過多，請等待 ${secs} 秒後再試。`);
+    return;
+  }
+
+  const input = document.getElementById('gate-input');
+  const raw = input.value.trim().toUpperCase();
+  if (!raw) return;
+
+  const hash = await sha256(raw);
+
+  if (hash === PW_HASH) {
+    // ✓ Correct — store session token and redirect
+    sessionStorage.setItem('pw_attempts', '0');
+    sessionStorage.removeItem('pw_lockout');
+    sessionStorage.setItem('clip_auth', '1');
+    window.location.href = PROTECTED_PAGE;
+  } else {
+    // ✗ Wrong
+    attempts++;
+    sessionStorage.setItem('pw_attempts', attempts);
+    input.value = '';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+
+    if (attempts >= MAX_ATTEMPTS) {
+      lockoutUntil = Date.now() + LOCKOUT_MS;
+      sessionStorage.setItem('pw_lockout', lockoutUntil);
+      attempts = 0;
+      sessionStorage.setItem('pw_attempts', '0');
+      showCooldown(isEn
+        ? `Too many attempts. Locked for 60 seconds.`
+        : `嘗試次數過多，已鎖定 60 秒。`);
+    } else {
+      const remaining = MAX_ATTEMPTS - attempts;
+      document.getElementById('gate-error').textContent = isEn
+        ? `Incorrect password. ${remaining} attempt${remaining===1?'':'s'} remaining.`
+        : `密碼錯誤，還剩 ${remaining} 次嘗試機會。`;
+      document.getElementById('gate-attempts').textContent = '';
+      hideCooldown();
+    }
+    input.focus();
+  }
+}
+
+function showCooldown(msg) {
+  document.getElementById('gate-error').textContent = '';
+  document.getElementById('gate-attempts').textContent = '';
+  const cd = document.getElementById('gate-cooldown');
+  cd.textContent = msg;
+  cd.style.display = 'block';
+  // Countdown update
+  const timer = setInterval(() => {
+    const secs = Math.ceil((lockoutUntil - Date.now()) / 1000);
+    if (secs <= 0) {
+      clearInterval(timer);
+      hideCooldown();
+      attempts = 0;
+      sessionStorage.setItem('pw_attempts', '0');
+    } else {
+      const isEn = currentLang === 'en';
+      cd.textContent = isEn
+        ? `Too many attempts. Please wait ${secs}s.`
+        : `嘗試次數過多，請等待 ${secs} 秒後再試。`;
+    }
+  }, 1000);
+}
+
+function hideCooldown() {
+  document.getElementById('gate-cooldown').style.display = 'none';
+}
+
+// ── LANG TOGGLE ──────────────────────────────────────────
+function toggleLang() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  const isEn = currentLang === 'en';
+  document.documentElement.lang = isEn ? 'en' : 'zh-Hant';
+  document.getElementById('lang-toggle').textContent = isEn ? '中' : 'EN';
+  document.querySelectorAll('[data-zh][data-en]').forEach(el => {
+    if (el.id === 'gate-input') return;
+    el.innerHTML = isEn ? el.dataset.en : el.dataset.zh;
+  });
+  document.title = isEn
+    ? 'CLIP Technical Brief — TVBS AI Hackathon 2026'
+    : 'CLIP 技術簡報 — TVBS AI Hackathon 2026';
+}
+
+// ── PROGRESS BAR ─────────────────────────────────────────
+const bar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const max = document.body.scrollHeight - window.innerHeight;
+  bar.style.width = (window.scrollY / max * 100) + '%';
+});
+
+// ── ACTIVE NAV ───────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.25 }).observe && sections.forEach(s =>
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.25 }).observe(s)
+);
+
+// ── FADE IN ───────────────────────────────────────────────
+document.querySelectorAll('.fade-in').forEach(el =>
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.08 }).observe(el)
+);
+
+// ── SCORE BARS ────────────────────────────────────────────
+document.querySelectorAll('.score-fill[data-width]').forEach(el =>
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.background = e.target.dataset.color;
+        e.target.style.width = e.target.dataset.width;
+      }
+    });
+  }, { threshold: 0.5 }).observe(el)
+);
+</script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVBS 提案方向 — CLIP Hackathon 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=DM+Mono:wght@400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#0f0f0d; --ink-2:#3a3a35; --ink-3:#7a7a72;
+  --paper:#f5f3ee; --paper-2:#eceae3; --paper-3:#e2dfd6;
+  --accent:#c8420a; --accent-light:#f5ede8;
+  --blue:#1a4a8a; --blue-light:#e8eef7;
+  --teal:#0e6655; --teal-light:#e4f2ef;
+  --amber:#8a5a0a; --amber-light:#faf0e0;
+  --red:#8a1a1a; --red-light:#f7e8e8;
+  --border:rgba(15,15,13,0.1); --border-strong:rgba(15,15,13,0.2);
+  --max:860px;
+}
+html { scroll-behavior:smooth; }
+body { font-family:'Noto Serif TC',serif; background:var(--paper); color:var(--ink); line-height:1.8; font-size:15px; }
+
+/* ACCESS SCREEN (shown before auth check completes) */
+#access-screen {
+  position:fixed; inset:0; z-index:999;
+  background:var(--paper);
+  display:flex; align-items:center; justify-content:center;
+}
+#access-screen.hidden { display:none; }
+
+/* LANG BAR */
+#lang-bar {
+  position:fixed; top:0; left:0; right:0; z-index:300;
+  height:36px; background:#fff; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.5rem; gap:8px;
+}
+.lang-bar-left { display:flex; align-items:center; gap:10px; }
+#back-link {
+  font-family:'DM Mono',monospace; font-size:11px;
+  color:var(--ink-3); text-decoration:none;
+  letter-spacing:0.06em; transition:color 0.2s;
+}
+#back-link:hover { color:var(--accent); }
+.lang-bar-right { display:flex; align-items:center; gap:8px; }
+#lang-bar span { font-family:'DM Mono',monospace; font-size:11px; color:var(--ink-3); letter-spacing:0.06em; }
+#lang-toggle {
+  font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.08em;
+  background:var(--ink); color:#fff; border:none; border-radius:4px;
+  padding:5px 14px; cursor:pointer; transition:background 0.2s;
+}
+#lang-toggle:hover { background:var(--accent); }
+
+/* PROGRESS BAR */
+#progress-bar { position:fixed; top:36px; left:0; height:3px; width:0%; background:var(--accent); z-index:200; transition:width 0.1s linear; }
+
+/* NAV */
+nav { position:sticky; top:36px; z-index:100; background:var(--ink); padding:0 2rem; display:flex; align-items:center; height:48px; overflow-x:auto; scrollbar-width:none; margin-top:36px; }
+nav::-webkit-scrollbar { display:none; }
+nav a { font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.45); text-decoration:none; white-space:nowrap; padding:0 1.1rem; height:48px; display:flex; align-items:center; border-right:1px solid rgba(255,255,255,0.07); transition:color 0.2s; letter-spacing:0.06em; }
+nav a:first-child { padding-left:0; }
+nav a:hover, nav a.active { color:#fff; }
+.nav-tag { font-family:'DM Mono',monospace; font-size:10px; color:var(--accent); margin-left:auto; white-space:nowrap; padding-left:1.5rem; letter-spacing:0.06em; }
+.nav-lock-open { font-size:9px; margin-left:4px; }
+
+/* HERO */
+.hero { padding:5rem 2rem 3rem; max-width:var(--max); margin:0 auto; border-bottom:1px solid var(--border); }
+.hero-eyebrow { font-family:'DM Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:1.5rem; opacity:0; animation:fadeUp 0.6s 0.1s forwards; }
+.hero h1 { font-family:'Syne',sans-serif; font-size:clamp(2rem,4.5vw,3.2rem); font-weight:800; line-height:1.05; letter-spacing:-0.02em; margin-bottom:1rem; opacity:0; animation:fadeUp 0.7s 0.2s forwards; }
+.hero h1 em { font-style:normal; color:var(--accent); }
+.hero-meta-row { display:flex; flex-wrap:wrap; gap:1.5rem; opacity:0; animation:fadeUp 0.7s 0.3s forwards; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+.hero-meta-item { font-family:'DM Mono',monospace; font-size:11px; color:var(--ink-3); }
+.hero-meta-item strong { display:block; color:var(--ink); font-size:13px; margin-bottom:2px; font-family:'Noto Serif TC',serif; }
+
+/* PAGE */
+.page { max-width:var(--max); margin:0 auto; padding:0 2rem 8rem; }
+
+/* SECTION */
+.section { padding:4rem 0; border-bottom:1px solid var(--border); }
+.section:last-child { border-bottom:none; }
+.section-header { display:flex; align-items:baseline; gap:1rem; margin-bottom:2.5rem; }
+.section-num { font-family:'DM Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:0.1em; white-space:nowrap; }
+.section-title { font-family:'Syne',sans-serif; font-size:1.65rem; font-weight:700; letter-spacing:-0.01em; }
+.sub-heading { font-size:14px; font-weight:600; color:var(--ink); margin:2rem 0 1rem; display:flex; align-items:center; gap:8px; }
+.sub-heading::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* CARDS */
+.card-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
+.card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:1.15rem 1.25rem; transition:transform 0.2s, box-shadow 0.2s; }
+.card:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.06); }
+.card-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; color:var(--ink-3); }
+.card-title { font-size:14px; font-weight:600; margin-bottom:6px; color:var(--ink); }
+.card-body { font-size:13px; color:var(--ink-2); line-height:1.65; }
+.card-blue  { border-left:3px solid var(--blue);   background:var(--blue-light);   } .card-blue .card-label  { color:var(--blue); }
+.card-accent{ border-left:3px solid var(--accent); background:var(--accent-light); } .card-accent .card-label{ color:var(--accent); }
+
+/* CALLOUT */
+.callout { background:var(--paper-2); border:1px solid var(--border-strong); border-radius:8px; padding:1.25rem 1.5rem; margin:1.5rem 0; }
+.callout-title { font-size:13px; font-weight:600; margin-bottom:6px; color:var(--ink); }
+.callout-body { font-size:13px; color:var(--ink-2); line-height:1.7; }
+
+/* BADGE */
+.badge { display:inline-block; font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:3px; margin:0 3px 3px 0; letter-spacing:0.04em; }
+.badge-blue   { background:var(--blue-light);   color:var(--blue); }
+.badge-teal   { background:var(--teal-light);   color:var(--teal); }
+.badge-amber  { background:var(--amber-light);  color:var(--amber); }
+.badge-accent { background:var(--accent-light); color:var(--accent); }
+.badge-ink    { background:var(--paper-3);      color:var(--ink-2); }
+
+/* TABLE */
+.compare-table { width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:13px; }
+.compare-table th { background:var(--ink); color:#fff; padding:10px 14px; text-align:left; font-family:'DM Mono',monospace; font-size:11px; font-weight:400; letter-spacing:0.06em; }
+.compare-table td { padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--ink-2); line-height:1.55; }
+.compare-table tr:last-child td { border-bottom:none; }
+.compare-table tr:nth-child(even) td { background:var(--paper-2); }
+.compare-table td:first-child { font-weight:600; color:var(--ink); }
+
+/* FLOW */
+.flow { background:var(--paper-2); border:1px solid var(--border-strong); border-radius:8px; padding:1.4rem 1.6rem; font-family:'DM Mono',monospace; font-size:12px; color:var(--ink-2); line-height:2.2; margin:1rem 0; }
+.flow-arrow { color:var(--accent); margin:0 6px; }
+.flow-label { display:inline-block; background:#fff; border:1px solid var(--border-strong); border-radius:4px; padding:1px 10px; color:var(--ink); }
+.flow-note { font-size:11px; color:var(--ink-3); display:block; margin-top:-6px; padding-left:1.2rem; }
+
+/* PROPOSAL HIGHLIGHT */
+.proposal-highlight { background:var(--ink); color:#fff; border-radius:10px; padding:1.75rem 2rem; margin:2rem 0; }
+.proposal-highlight h3 { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:700; margin-bottom:10px; }
+.proposal-highlight p { font-size:14px; color:rgba(255,255,255,0.72); line-height:1.75; }
+.ph-accent { color:#f5a87a; font-style:normal; }
+
+/* NOTICE */
+.notice { font-family:'DM Mono',monospace; font-size:11px; color:var(--ink-3); background:var(--paper-2); border-radius:4px; padding:10px 14px; margin-top:14px; line-height:1.65; }
+.tag-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+
+/* LOCK BADGE */
+.access-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:'DM Mono',monospace; font-size:10px;
+  background:var(--teal-light); color:var(--teal);
+  border-radius:4px; padding:3px 10px; margin-bottom:1.5rem;
+  opacity:0; animation:fadeUp 0.6s 0.05s forwards;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+.fade-in { opacity:0; transform:translateY(20px); transition:opacity 0.6s ease, transform 0.6s ease; }
+.fade-in.visible { opacity:1; transform:translateY(0); }
+
+@media (max-width:620px) {
+  .card-grid { grid-template-columns:1fr; }
+  .hero h1 { font-size:1.8rem; }
+  nav a { font-size:10px; padding:0 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Shown until auth check completes — prevents flash of content -->
+<div id="access-screen">
+  <p style="font-family:'DM Mono',monospace; font-size:12px; color:#7a7a72; letter-spacing:0.08em;">Verifying access…</p>
+</div>
+
+<div id="progress-bar"></div>
+
+<div id="lang-bar">
+  <div class="lang-bar-left">
+    <a href="index.html" id="back-link" data-zh="← 返回主頁" data-en="← Back">← 返回主頁</a>
+  </div>
+  <div class="lang-bar-right">
+    <span id="lang-label" data-zh="目前語言：中文" data-en="Current Language: English">目前語言：中文</span>
+    <button id="lang-toggle" onclick="toggleLang()">EN</button>
+  </div>
+</div>
+
+<nav>
+  <a href="index.html#tech" data-zh="01 技術原理" data-en="01 Technology">01 技術原理</a>
+  <a href="index.html#news" data-zh="02 新聞業應用" data-en="02 News Industry">02 新聞業應用</a>
+  <a href="#" class="active" data-zh="03 TVBS 提案方向 🔓" data-en="03 TVBS Proposal 🔓">03 TVBS 提案方向 🔓</a>
+  <span class="nav-tag">TVBS AI Hackathon 2026</span>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <p class="hero-eyebrow" data-zh="內部文件 — 已驗證存取" data-en="Internal Document — Verified Access">內部文件 — 已驗證存取</p>
+  <div class="access-badge">🔓 <span data-zh="已通過密碼驗證" data-en="Password Verified">已通過密碼驗證</span></div>
+  <h1 data-zh="TVBS 提案方向<br><em>Hackathon Phase 1</em>" data-en="TVBS Proposal Direction<br><em>Hackathon Phase 1</em>">TVBS 提案方向<br><em>Hackathon Phase 1</em></h1>
+  <div class="hero-meta-row">
+    <div class="hero-meta-item"><strong data-zh="使用者" data-en="Target Users">使用者</strong><span data-zh="編輯、記者、新聞產製團隊" data-en="Editors, journalists, production teams">編輯、記者、新聞產製團隊</span></div>
+    <div class="hero-meta-item"><strong data-zh="目標" data-en="Goals">目標</strong><span data-zh="快速配圖（搶快）、SEO 稿提升流量" data-en="Fast image matching, SEO traffic boost">快速配圖（搶快）、SEO 稿提升流量</span></div>
+    <div class="hero-meta-item"><strong data-zh="核心技術" data-en="Core Tech">核心技術</strong>CLIP + OpenSearch</div>
+    <div class="hero-meta-item"><strong data-zh="影片範圍" data-en="Video Scope">影片範圍</strong><span data-zh="未來升級方向，不納入本次" data-en="Future upgrade, excluded from Phase 1">未來升級方向，不納入本次</span></div>
+  </div>
+</div>
+
+<div class="page">
+
+<section class="section fade-in" id="pain-points">
+  <div class="section-header">
+    <span class="section-num">3.1 —</span>
+    <h2 class="section-title" data-zh="現有搜圖方式的痛點" data-en="Pain Points in Current Image Search">現有搜圖方式的痛點</h2>
+  </div>
+  <table class="compare-table">
+    <thead><tr>
+      <th data-zh="現有方式" data-en="Current Method">現有方式</th>
+      <th data-zh="做法" data-en="How It Works">做法</th>
+      <th data-zh="問題所在" data-en="The Problem">問題所在</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td data-zh="人工關鍵字搜尋" data-en="Manual Keyword Search">人工關鍵字搜尋</td>
+        <td data-zh="在圖庫系統輸入關鍵字（如「颱風」）" data-en="Type keywords into the image system (e.g., 'typhoon')">在圖庫系統輸入關鍵字（如「颱風」）</td>
+        <td data-zh="只能找到有被標記的圖，標記不完整就找不到" data-en="Only returns tagged images — incomplete tagging = invisible images">只能找到有被標記的圖，標記不完整就找不到</td>
+      </tr>
+      <tr>
+        <td data-zh="靠人工記憶" data-en="Relying on Memory">靠人工記憶</td>
+        <td data-zh="記者記得「上次哪篇報導有那張圖」" data-en="Reporter recalls 'which story had that image'">記者記得「上次哪篇報導有那張圖」</td>
+        <td data-zh="依賴個人經驗，新人完全無法操作" data-en="Entirely dependent on personal experience — inaccessible to new staff">依賴個人經驗，新人完全無法操作</td>
+      </tr>
+      <tr>
+        <td data-zh="問同事" data-en="Asking Colleagues">問同事</td>
+        <td data-zh="詢問資深編輯或攝影記者" data-en="Ask senior editors or photojournalists">詢問資深編輯或攝影記者</td>
+        <td data-zh="效率低，造成被詢問者工作中斷" data-en="Inefficient and disrupts the colleague's workflow">效率低，造成被詢問者工作中斷</td>
+      </tr>
+      <tr>
+        <td data-zh="外部圖庫購買" data-en="External Stock Purchase">外部圖庫購買</td>
+        <td data-zh="去 Getty Images、Shutterstock 等購圖" data-en="Purchase from Getty Images, Shutterstock, etc.">去 Getty Images、Shutterstock 等購圖</td>
+        <td data-zh="費用高，且圖片非 TVBS 自有素材" data-en="High cost; images are not TVBS-owned assets">費用高，且圖片非 TVBS 自有素材</td>
+      </tr>
+      <tr>
+        <td data-zh="OpenSearch 文章搜尋" data-en="OpenSearch Article Search">OpenSearch 文章搜尋</td>
+        <td data-zh="以文章全文作為圖片的 metadata 搜尋" data-en="Use article full text as image metadata">以文章全文作為圖片的 metadata 搜尋</td>
+        <td data-zh="<strong>文章內容 ≠ 圖片內容</strong>，產生大量雜訊。例：報導颱風的文章配的圖可能是氣象局長在開記者會" data-en="<strong>Article ≠ Image</strong>, generates massive noise. Example: a typhoon article illustrated with the meteorology chief at a press conference"><strong>文章內容 ≠ 圖片內容</strong>，產生大量雜訊。例：報導颱風的文章配的圖可能是氣象局長在開記者會</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section fade-in" id="scenarios">
+  <div class="section-header">
+    <span class="section-num">3.2 —</span>
+    <h2 class="section-title" data-zh="CLIP 能補足的缺口" data-en="The Gap CLIP Fills">CLIP 能補足的缺口</h2>
+  </div>
+  <div class="card-grid" style="margin-bottom:1rem;">
+    <div class="card card-accent">
+      <p class="card-label" data-zh="場景一 ★ 建議核心 Prototype" data-en="Scenario 1 ★ Core Prototype">場景一 ★ 建議核心 Prototype</p>
+      <p class="card-title" data-zh="搶快稿：示意圖快速配圖" data-en="Breaking News: Instant Image Matching">搶快稿：示意圖快速配圖</p>
+      <p class="card-body" data-zh="突發新聞發生時，文字可以很快，但配圖常是卡關點。記者輸入「工廠火災濃煙」，系統秒回 TVBS 自有圖庫中視覺最符合的示意圖，直接授權使用，不涉及外部版權問題。" data-en="When breaking news hits, copy is fast but images are the bottleneck. A reporter types 'factory fire black smoke' and the system instantly returns the most visually matching images from TVBS's own library — no external copyright issues.">突發新聞發生時，文字可以很快，但配圖常是卡關點。記者輸入「工廠火災濃煙」，系統秒回 TVBS 自有圖庫中視覺最符合的示意圖，直接授權使用，不涉及外部版權問題。</p>
+      <div class="tag-row">
+        <span class="badge badge-accent" data-zh="AI 不可或缺" data-en="AI Indispensable">AI 不可或缺</span>
+        <span class="badge badge-teal" data-zh="可量化成效" data-en="Measurable Impact">可量化成效</span>
+        <span class="badge badge-blue" data-zh="Demo 效果直觀" data-en="Intuitive Demo">Demo 效果直觀</span>
+      </div>
+    </div>
+    <div class="card card-blue">
+      <p class="card-label" data-zh="場景二 ○ 可考慮" data-en="Scenario 2 ○ Worth Considering">場景二 ○ 可考慮</p>
+      <p class="card-title" data-zh="深度稿：跨事件畫面素材查找" data-en="In-Depth: Cross-Event Visual Search">深度稿：跨事件畫面素材查找</p>
+      <p class="card-body" data-zh="記者寫深度 SEO 稿需要多張圖片。<strong>正確分工：</strong>先用 OpenSearch 找到特定事件的文章（事件識別），再用 CLIP 在這批素材中篩選符合畫面感的圖片（如「淹水街道」、「強風吹倒樹木」）。兩層搜尋各司其職。" data-en="In-depth SEO articles require multiple images. <strong>Correct division of labor:</strong> OpenSearch identifies the event; CLIP filters for the right visual mood (e.g., 'flooded streets,' 'trees blown down'). Each system does what it does best.">記者寫深度 SEO 稿需要多張圖片。<strong>正確分工：</strong>先用 OpenSearch 找到特定事件的文章（事件識別），再用 CLIP 在這批素材中篩選符合畫面感的圖片（如「淹水街道」、「強風吹倒樹木」）。兩層搜尋各司其職。</p>
+      <div class="tag-row">
+        <span class="badge badge-blue" data-zh="需搭配 OpenSearch" data-en="Requires OpenSearch">需搭配 OpenSearch</span>
+        <span class="badge badge-ink" data-zh="兩層架構" data-en="Two-Layer Architecture">兩層架構</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="border-left:3px solid var(--amber); background:var(--amber-light);">
+    <p class="callout-title" style="color:var(--amber);" data-zh="未來延伸方向（超出 CLIP 能力範圍）" data-en="Future Extension (Beyond CLIP's Scope)">未來延伸方向（超出 CLIP 能力範圍）</p>
+    <p class="callout-body" data-zh="圖片 alt text 對 Google 圖片搜尋排名有直接影響，目前新聞業幾乎都是空白。<br><br><strong>技術澄清：</strong>CLIP 是「選擇題」模型，<strong>無法自行生成文字描述</strong>。要做 alt text 自動建議，需串接 Vision-Language Model（如 GPT-4V、LLaVA）。此功能屬第二階段技術擴充，不納入本次 Prototype 範圍，可在提案中列為後續優化路徑。" data-en="Image alt text directly impacts Google Image Search rankings — yet it is almost universally empty across the news industry.<br><br><strong>Technical clarification:</strong> CLIP is a matching model and <strong>cannot generate text</strong>. Alt text suggestions require a Vision-Language Model (GPT-4V, LLaVA). This is a Phase 2 feature — out of scope for the current Prototype but should be listed as a future optimization path.">圖片 alt text 對 Google 圖片搜尋排名有直接影響，目前新聞業幾乎都是空白。<br><br><strong>技術澄清：</strong>CLIP 是「選擇題」模型，<strong>無法自行生成文字描述</strong>。要做 alt text 自動建議，需串接 Vision-Language Model（如 GPT-4V、LLaVA）。此功能屬第二階段技術擴充，不納入本次 Prototype 範圍，可在提案中列為後續優化路徑。</p>
+  </div>
+</section>
+
+<section class="section fade-in" id="architecture">
+  <div class="section-header">
+    <span class="section-num">3.3 —</span>
+    <h2 class="section-title" data-zh="建議系統架構" data-en="Recommended System Architecture">建議系統架構</h2>
+  </div>
+  <div class="flow">
+    <div><span class="flow-label" data-zh="記者輸入查詢" data-en="Reporter enters query">記者輸入查詢</span></div>
+    <div style="padding-left:1rem; margin-top:6px;">
+      <span data-zh="├ 知道事件 / 人名 / 時間？" data-en="├ Know event / name / time?">├ 知道事件 / 人名 / 時間？</span><span class="flow-arrow">→</span><span class="flow-label">OpenSearch</span>
+      <span class="flow-note" data-zh="找到對的事件，縮小素材範圍" data-en="Locate the right event, narrow down asset pool">找到對的事件，縮小素材範圍</span>
+    </div>
+    <div style="padding-left:1rem;">
+      <span data-zh="└ 想找某種畫面感 / 場景？" data-en="└ Looking for a visual mood / scene?">└ 想找某種畫面感 / 場景？</span><span class="flow-arrow">→</span><span class="flow-label">CLIP</span>
+      <span class="flow-note" data-zh="找到視覺相符的圖片，無需事先標記" data-en="Find visually matching images — no pre-tagging required">找到視覺相符的圖片，無需事先標記</span>
+    </div>
+    <div style="margin-top:6px;"><span class="flow-arrow">↓</span></div>
+    <div>
+      <span class="flow-label" data-zh="重排序層（Re-ranking）" data-en="Re-ranking Layer">重排序層（Re-ranking）</span>
+      <span style="font-size:11px; color:var(--ink-3); margin-left:10px;" data-zh="疊加時效性 + 使用頻率參數，調整最終排序" data-en="Apply recency + usage frequency weighting">疊加時效性 + 使用頻率參數，調整最終排序</span>
+    </div>
+    <div style="margin-top:4px;"><span class="flow-arrow">↓</span></div>
+    <div><span class="flow-label" data-zh="回傳最相關素材" data-en="Return most relevant assets">回傳最相關素材</span></div>
+  </div>
+</section>
+
+<section class="section fade-in" id="scoring">
+  <div class="section-header">
+    <span class="section-num">3.4 —</span>
+    <h2 class="section-title" data-zh="比賽評分對應" data-en="Hackathon Scoring Alignment">比賽評分對應</h2>
+  </div>
+  <table class="compare-table">
+    <thead><tr>
+      <th data-zh="評分構面" data-en="Scoring Dimension">評分構面</th>
+      <th style="width:60px;" data-zh="權重" data-en="Weight">權重</th>
+      <th data-zh="我們的對應說明" data-en="Our Alignment">我們的對應說明</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td data-zh="實際影響力與價值" data-en="Real Impact & Value">實際影響力與價值</td>
+        <td>35%</td>
+        <td data-zh="可量化：「配圖時間從幾分鐘降到幾秒」，搶快稿的時間節省可在導入期直接記錄與比較" data-en="Quantifiable: 'Image sourcing time reduced from minutes to seconds' — directly measurable during the deployment period">可量化：「配圖時間從幾分鐘降到幾秒」，搶快稿的時間節省可在導入期直接記錄與比較</td>
+      </tr>
+      <tr>
+        <td data-zh="問題與解法適配度" data-en="Problem–Solution Fit">問題與解法適配度</td>
+        <td>25%</td>
+        <td data-zh="現有 OpenSearch + 人工搜圖無法解決「畫面感搜尋」，問題明確、被正確理解，解法直接對應" data-en="Existing OpenSearch + manual search cannot address visual mood search — the problem is clearly defined and the solution directly maps to it">現有 OpenSearch + 人工搜圖無法解決「畫面感搜尋」，問題明確、被正確理解，解法直接對應</td>
+      </tr>
+      <tr>
+        <td data-zh="AI 關鍵角色" data-en="AI as an Enabler">AI 關鍵角色</td>
+        <td>20%</td>
+        <td data-zh="沒有 CLIP，「無標記影像的語意搜尋」根本不可行。AI 讓不可行的事變可行，而非只是加速" data-en="Without CLIP, semantic search of untagged images is fundamentally impossible. AI makes the impossible possible — not just faster">沒有 CLIP，「無標記影像的語意搜尋」根本不可行。AI 讓不可行的事變可行，而非只是加速</td>
+      </tr>
+      <tr>
+        <td data-zh="導入可行性" data-en="Adoption Readiness">導入可行性</td>
+        <td>20%</td>
+        <td data-zh="符合現有工作流程；可先以自有圖庫模擬資料建立 Prototype，並在提案中說明真實資料來源、授權與風險" data-en="Compatible with existing workflows; Prototype uses simulated data from owned library, with real data sources, licensing, and risk documented in the proposal">符合現有工作流程；可先以自有圖庫模擬資料建立 Prototype，並在提案中說明真實資料來源、授權與風險</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="proposal-highlight fade-in">
+    <h3 data-zh="核心論點：AI 不可或缺性" data-en="Core Argument: AI Indispensability">核心論點：AI 不可或缺性</h3>
+    <p data-zh="現有系統（OpenSearch）能做到的是「<em class='ph-accent'>事件級搜尋</em>」——你必須知道要找哪篇新聞。CLIP 補足的是「<em class='ph-accent'>畫面級搜尋</em>」——你只知道要的畫面長什麼樣子，不知道它在哪篇新聞裡。這是現有系統的<strong>結構性盲點</strong>，不是優化問題，而是根本做不到的事。沒有 CLIP，這個需求永遠無法被滿足。" data-en="The existing system (OpenSearch) enables <em class='ph-accent'>event-level search</em> — you must know which story you want. CLIP fills in <em class='ph-accent'>visual-level search</em> — you only know what the image should look like. This is a <strong>structural blind spot</strong> in the current system — not an optimization problem, but something that fundamentally cannot be done today. Without CLIP, this need can never be met.">現有系統（OpenSearch）能做到的是「<em class="ph-accent">事件級搜尋</em>」——你必須知道要找哪篇新聞。CLIP 補足的是「<em class="ph-accent">畫面級搜尋</em>」——你只知道要的畫面長什麼樣子，不知道它在哪篇新聞裡。這是現有系統的<strong>結構性盲點</strong>，不是優化問題，而是根本做不到的事。沒有 CLIP，這個需求永遠無法被滿足。</p>
+  </div>
+
+  <div class="notice" data-zh="※ 本節「現有搜圖方式」部分為基於產業通則的推論，實際 TVBS 內部系統細節以團隊自身掌握的資訊為準，提案前建議與相關部門確認現況後再定稿。" data-en="※ The 'Current Image Search Methods' section is based on general industry practices. Actual TVBS internal system details should be confirmed with relevant departments before finalizing the proposal.">※ 本節「現有搜圖方式」部分為基於產業通則的推論，實際 TVBS 內部系統細節以團隊自身掌握的資訊為準，提案前建議與相關部門確認現況後再定稿。</div>
+</section>
+
+</div>
+
+<script>
+// ── AUTH CHECK — runs immediately before rendering ───────
+(function() {
+  const auth = sessionStorage.getItem('clip_auth');
+  if (auth !== '1') {
+    // Not authenticated — redirect back immediately
+    window.location.replace('index.html');
+  } else {
+    // Authenticated — reveal content
+    document.getElementById('access-screen').classList.add('hidden');
+  }
+})();
+
+let currentLang = 'zh';
+
+function toggleLang() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  const isEn = currentLang === 'en';
+  document.documentElement.lang = isEn ? 'en' : 'zh-Hant';
+  document.getElementById('lang-toggle').textContent = isEn ? '中' : 'EN';
+  document.querySelectorAll('[data-zh][data-en]').forEach(el => {
+    el.innerHTML = isEn ? el.dataset.en : el.dataset.zh;
+  });
+  document.title = isEn
+    ? 'TVBS Proposal — CLIP Hackathon 2026'
+    : 'TVBS 提案方向 — CLIP Hackathon 2026';
+}
+
+// Progress bar
+const bar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const max = document.body.scrollHeight - window.innerHeight;
+  bar.style.width = (window.scrollY / max * 100) + '%';
+});
+
+// Fade-in
+document.querySelectorAll('.fade-in').forEach(el =>
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 }).observe(el)
+);
+</script>
+</body>
+</html>
